@@ -12,7 +12,6 @@ import satelliteRoutes from "./routes/satellite.routes.js";
 import marketplaceRoutes from "./routes/marketplace.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import messageRoutes from "./routes/message.routes.js";
-import recycleRoutes from "./routes/recycle.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -33,7 +32,6 @@ app.use("/api/satellite", satelliteRoutes);
 app.use("/api/marketplace", marketplaceRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/messages", messageRoutes);
-app.use("/api/recycle", recycleRoutes);
 
 app.use(errorHandler);
 

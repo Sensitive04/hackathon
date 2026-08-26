@@ -39,10 +39,12 @@ export const api = {
     }).then(handleResponse);
   },
 
-  getMyListings: () =>
-    fetch(`${API_URL}/marketplace/my-listings`, {
+  getMyListings: (params?: Record<string, string>) => {
+    const query = params ? "?" + new URLSearchParams(params).toString() : "";
+    return fetch(`${API_URL}/marketplace/my-listings${query}`, {
       headers: getHeaders(),
-    }).then(handleResponse),
+    }).then(handleResponse);
+  },
 
   purchaseItem: (id: string) =>
     fetch(`${API_URL}/marketplace/${id}/purchase`, {
@@ -76,17 +78,13 @@ export const api = {
       body: JSON.stringify({ name, email, password }),
     }).then(handleResponse),
 
-  createRecyclerAccount: (name: string, email: string, password: string) =>
-    fetch(`${API_URL}/admin/create-recycler`, {
-      method: "POST",
+  getAdminListings: (page = 1, listingType?: string) => {
+    let url = `${API_URL}/admin/listings?page=${page}`;
+    if (listingType) url += `&listingType=${listingType}`;
+    return fetch(url, {
       headers: getHeaders(),
-      body: JSON.stringify({ name, email, password }),
-    }).then(handleResponse),
-
-  getAdminListings: (page = 1) =>
-    fetch(`${API_URL}/admin/listings?page=${page}`, {
-      headers: getHeaders(),
-    }).then(handleResponse),
+    }).then(handleResponse);
+  },
 
   deleteAdminListing: (id: string) =>
     fetch(`${API_URL}/admin/listings/${id}`, {
@@ -96,27 +94,6 @@ export const api = {
 
   getAdminStats: () =>
     fetch(`${API_URL}/admin/stats`, {
-      headers: getHeaders(),
-    }).then(handleResponse),
-
-  adminGetAllPickups: (page = 1, status?: string) => {
-    const params = new URLSearchParams({ page: String(page) });
-    if (status) params.set("status", status);
-    return fetch(`${API_URL}/admin/recycle-pickups?${params}`, {
-      headers: getHeaders(),
-    }).then(handleResponse);
-  },
-
-  adminReassignPickup: (id: string, recyclerId: string | null) =>
-    fetch(`${API_URL}/admin/recycle-pickups/${id}/reassign`, {
-      method: "PUT",
-      headers: getHeaders(),
-      body: JSON.stringify({ recyclerId }),
-    }).then(handleResponse),
-
-  adminDeletePickup: (id: string) =>
-    fetch(`${API_URL}/admin/recycle-pickups/${id}`, {
-      method: "DELETE",
       headers: getHeaders(),
     }).then(handleResponse),
 
@@ -148,35 +125,6 @@ export const api = {
   markConversationRead: (conversationId: string) =>
     fetch(`${API_URL}/messages/${conversationId}/read`, {
       method: "PUT",
-      headers: getHeaders(),
-    }).then(handleResponse),
-
-  // Recycle Pickups
-  getPendingPickups: () =>
-    fetch(`${API_URL}/recycle/pending`, {
-      headers: getHeaders(),
-    }).then(handleResponse),
-
-  claimPickup: (listingId: string) =>
-    fetch(`${API_URL}/recycle/${listingId}/claim`, {
-      method: "POST",
-      headers: getHeaders(),
-    }).then(handleResponse),
-
-  updatePickupStatus: (
-    id: string,
-    status: string,
-    notes?: string,
-    scheduledDate?: string
-  ) =>
-    fetch(`${API_URL}/recycle/${id}/status`, {
-      method: "PUT",
-      headers: getHeaders(),
-      body: JSON.stringify({ status, notes, scheduledDate }),
-    }).then(handleResponse),
-
-  getMyPickups: () =>
-    fetch(`${API_URL}/recycle/my-pickups`, {
       headers: getHeaders(),
     }).then(handleResponse),
 

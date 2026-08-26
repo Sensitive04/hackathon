@@ -2,7 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: "user" | "admin" | "recycler";
+  role: "user" | "admin";
   carbonFootprint: number;
   avatar?: string;
 }
@@ -51,41 +51,21 @@ export interface ChatMessage {
   createdAt: string;
 }
 
-export interface RecyclePickup {
-  _id: string;
-  listingId: {
-    _id: string;
-    title: string;
-    description: string;
-    images: string[];
-    category: string;
-    condition: string;
-  };
-  requesterId: { _id: string; name: string; avatar?: string };
-  recyclerId?: { _id: string; name: string; avatar?: string };
-  status: "pending" | "claimed" | "picked_up" | "completed";
-  notes: string;
-  scheduledDate?: string;
-  createdAt: string;
-}
-
 export interface AdminStats {
   totalUsers: number;
   adminCount: number;
-  recyclerCount: number;
   userCount: number;
   totalListings: number;
   activeListings: number;
   soldListings: number;
   recycledListings: number;
-  pendingPickups: number;
-  completedPickups: number;
+  recycleListings: number;
 }
 
 export interface AdminUser {
   id: string;
   name: string;
   email: string;
-  role: "user" | "admin" | "recycler";
+  role: "user" | "admin";
   createdAt: string;
 }

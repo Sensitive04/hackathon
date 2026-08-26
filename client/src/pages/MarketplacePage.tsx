@@ -31,6 +31,11 @@ export default function MarketplacePage() {
   const [tab, setTab] = useState<Tab>("browse");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [listingTypeFilter, setListingTypeFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [myStatusFilter, setMyStatusFilter] = useState("");
+  const [myTypeFilter, setMyTypeFilter] = useState("");
 
   // List form
   const [listForm, setListForm] = useState({
@@ -48,15 +53,19 @@ export default function MarketplacePage() {
   const [recycleResult, setRecycleResult] = useState<RecyclingAnalysis | null>(null);
   const [recycleLoading, setRecycleLoading] = useState(false);
 
-  const fetchItems = async () => {
+  const fetchItems = async (pageNum = 1) => {
     setLoading(true);
     setError("");
     try {
       const params: Record<string, string> = {};
       if (categoryFilter) params.category = categoryFilter;
       if (searchQuery) params.search = searchQuery;
+      if (listingTypeFilter) params.listingType = listingTypeFilter;
+      params.page = String(pageNum);
       const data = await api.getMarketplace(params);
-      setItems(data);
+      setItems(data.items);
+      setPages(data.pages);
+      setPage(data.page);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -67,7 +76,10 @@ export default function MarketplacePage() {
   const fetchMyListings = async () => {
     setLoading(true);
     try {
-      const data = await api.getMyListings();
+      const params: Record<string, string> = {};
+      if (myStatusFilter) params.status = myStatusFilter;
+      if (myTypeFilter) params.listingType = myTypeFilter;
+      const data = await api.getMyListings(params);
       setMyItems(data);
     } catch (err: any) {
       toast.error("Failed to load your listings");
@@ -77,16 +89,21 @@ export default function MarketplacePage() {
   };
 
   useEffect(() => {
-    if (tab === "browse") fetchItems();
+    if (tab === "browse") fetchItems(1);
     if (tab === "my-listings") fetchMyListings();
-  }, [categoryFilter, tab]);
+  }, [categoryFilter, listingTypeFilter, tab, myStatusFilter, myTypeFilter]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchItems();
+    fetchItems(1);
   };
 
   const handleMessageSeller = async (sellerId: string, listingId: string) => {
+    if (!user) {
+      toast.error("Sign in to message sellers");
+      navigate("/login");
+      return;
+    }
     try {
       const convo = await api.createConversation(sellerId, listingId);
       navigate(`/messages?conversation=${convo.id}`);
@@ -97,11 +114,16 @@ export default function MarketplacePage() {
 
   const handleList = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      toast.error("Sign in to list items");
+      navigate("/login");
+      return;
+    }
     setListingLoading(true);
     try {
       await api.listItem({
         ...listForm,
-        price: listForm.listingType === "free" ? 0 : parseFloat(listForm.price) || 0,
+        price: listForm.listingType === "free" || listForm.listingType === "recycle" ? 0 : parseFloat(listForm.price) || 0,
       });
       toast.success("Item listed successfully!");
       setListForm({
@@ -113,7 +135,7 @@ export default function MarketplacePage() {
         listingType: "sale",
       });
       setTab("browse");
-      fetchItems();
+      fetchItems(1);
     } catch (err: any) {
       toast.error(err.message || "Failed to list item");
     } finally {
@@ -136,10 +158,15 @@ export default function MarketplacePage() {
   };
 
   const handlePurchase = async (id: string) => {
+    if (!user) {
+      toast.error("Sign in to buy items");
+      navigate("/login");
+      return;
+    }
     try {
       await api.purchaseItem(id);
       toast.success("Item purchased!");
-      fetchItems();
+      fetchItems(page);
     } catch (err: any) {
       toast.error(err.message || "Purchase failed");
     }
@@ -152,7 +179,7 @@ export default function MarketplacePage() {
   const statusColors: Record<string, string> = {
     available: "bg-green-100 text-green-700",
     sold: "bg-blue-100 text-blue-700",
-    recycled: "bg-purple-100 text-purple-700",
+    recycled: "bg-emerald-100 text-emerald-700",
     expired: "bg-gray-100 text-gray-500",
   };
 
@@ -176,8 +203,10 @@ export default function MarketplacePage() {
       <div className="flex gap-2 mb-8 border-b border-gray-200 overflow-x-auto">
         {[
           { key: "browse", label: "Marketplace", icon: ShoppingCart },
-          { key: "my-listings", label: "My Listings", icon: Package },
-          { key: "list", label: "List Item", icon: Plus },
+          ...(user ? [
+            { key: "my-listings", label: "My Listings", icon: Package },
+            { key: "list", label: "List Item", icon: Plus },
+          ] : []),
           { key: "recycle", label: "Recycle Guide", icon: Recycle },
         ].map((t) => (
           <button
@@ -226,6 +255,16 @@ export default function MarketplacePage() {
                 </option>
               ))}
             </select>
+            <select
+              className="input-field w-auto"
+              value={listingTypeFilter}
+              onChange={(e) => setListingTypeFilter(e.target.value)}
+            >
+              <option value="">All Types</option>
+              <option value="sale">Sale</option>
+              <option value="free">Free</option>
+              <option value="recycle">Recycle</option>
+            </select>
           </div>
 
           {loading && <LoadingSpinner text="Loading marketplace..." />}
@@ -248,7 +287,7 @@ export default function MarketplacePage() {
                       item.listingType === "free"
                         ? "bg-green-100 text-green-700"
                         : item.listingType === "recycle"
-                        ? "bg-blue-100 text-blue-700"
+                        ? "bg-emerald-100 text-emerald-700"
                         : "bg-purple-100 text-purple-700"
                     }`}
                   >
@@ -285,12 +324,12 @@ export default function MarketplacePage() {
                         <MessageCircle className="w-4 h-4" />
                       </button>
                     )}
-                    {item.listingType !== "recycle" && item.status === "available" && (
+                    {item.status === "available" && (
                       <button
                         onClick={() => handlePurchase(item._id)}
                         className="btn-primary text-xs py-1.5 px-3"
                       >
-                        {item.listingType === "free" ? "Claim" : "Buy"}
+                        {item.listingType === "free" ? "Claim" : item.listingType === "recycle" ? "Recycle" : "Buy"}
                       </button>
                     )}
                   </div>
@@ -298,12 +337,58 @@ export default function MarketplacePage() {
               </div>
             ))}
           </div>
+
+          {pages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-6">
+              <button
+                onClick={() => fetchItems(page - 1)}
+                disabled={page <= 1}
+                className="px-3 py-1.5 text-sm rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-30"
+              >
+                Previous
+              </button>
+              <span className="text-sm text-gray-500">
+                Page {page} of {pages}
+              </span>
+              <button
+                onClick={() => fetchItems(page + 1)}
+                disabled={page >= pages}
+                className="px-3 py-1.5 text-sm rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-30"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       )}
 
       {/* My Listings */}
       {tab === "my-listings" && (
         <div>
+          <div className="flex gap-2 mb-4">
+            <select
+              className="input-field w-auto"
+              value={myStatusFilter}
+              onChange={(e) => setMyStatusFilter(e.target.value)}
+            >
+              <option value="">All Status</option>
+              <option value="available">Available</option>
+              <option value="sold">Sold</option>
+              <option value="recycled">Recycled</option>
+              <option value="expired">Expired</option>
+            </select>
+            <select
+              className="input-field w-auto"
+              value={myTypeFilter}
+              onChange={(e) => setMyTypeFilter(e.target.value)}
+            >
+              <option value="">All Types</option>
+              <option value="sale">Sale</option>
+              <option value="free">Free</option>
+              <option value="recycle">Recycle</option>
+            </select>
+          </div>
+
           {loading && <LoadingSpinner text="Loading your listings..." />}
 
           {!loading && myItems.length === 0 && (
@@ -339,15 +424,15 @@ export default function MarketplacePage() {
                 </p>
                 <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
                   <span className="capitalize">{item.category}</span>
-                  <span
-                    className={`px-2 py-0.5 rounded-full font-medium ${
-                      item.listingType === "free"
-                        ? "bg-green-100 text-green-700"
-                        : item.listingType === "recycle"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-purple-100 text-purple-700"
-                    }`}
-                  >
+                    <span
+                      className={`px-2 py-0.5 rounded-full font-medium ${
+                        item.listingType === "free"
+                          ? "bg-green-100 text-green-700"
+                          : item.listingType === "recycle"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-purple-100 text-purple-700"
+                      }`}
+                    >
                     {item.listingType === "sale" ? `$${item.price}` : item.listingType}
                   </span>
                 </div>
@@ -559,7 +644,7 @@ export default function MarketplacePage() {
                         {m}
                       </span>
                     ))}
-                  </div>
+                    </div>
                 </div>
               )}
 

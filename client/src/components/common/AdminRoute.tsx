@@ -3,6 +3,6 @@ import { useAuth } from "../../context/AuthContext";
 
 export default function AdminRoute({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  if (user?.role !== "admin") return <Navigate to="/dashboard" />;
+  if (user?.role !== "admin") return <Navigate to="/" />;
   return <>{children}</>;
 }

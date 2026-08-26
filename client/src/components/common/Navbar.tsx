@@ -1,17 +1,27 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { Leaf, LogOut, Menu, X, LayoutDashboard, MessageCircle, Shield, Recycle } from "lucide-react";
+import { Leaf, LogOut, Menu, X, MessageCircle, Shield } from "lucide-react";
 import { useState } from "react";
 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate("/");
     setMobileOpen(false);
+  };
+
+  const scrollToFeatures = () => {
+    setMobileOpen(false);
+    if (location.pathname === "/") {
+      document.getElementById("features")?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate("/#features");
+    }
   };
 
   const navLink =
@@ -32,10 +42,6 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-1">
             {isAuthenticated ? (
               <>
-                <Link to="/dashboard" className={navLink}>
-                  <LayoutDashboard className="w-4 h-4 inline mr-1" />
-                  Dashboard
-                </Link>
                 <Link to="/satellite" className={navLink}>
                   Green Map
                 </Link>
@@ -52,12 +58,6 @@ export default function Navbar() {
                   <MessageCircle className="w-4 h-4 inline mr-1" />
                   Messages
                 </Link>
-                {(user?.role === "recycler" || user?.role === "admin") && (
-                  <Link to="/recycle-queue" className={navLink}>
-                    <Recycle className="w-4 h-4 inline mr-1" />
-                    Recycle Queue
-                  </Link>
-                )}
                 {user?.role === "admin" && (
                   <Link to="/admin" className={navLink}>
                     <Shield className="w-4 h-4 inline mr-1" />
@@ -72,11 +72,6 @@ export default function Navbar() {
                         Admin
                       </span>
                     )}
-                    {user?.role === "recycler" && (
-                      <span className="ml-1 text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">
-                        Recycler
-                      </span>
-                    )}
                   </span>
                   <button onClick={handleLogout} className="text-gray-400 hover:text-red-500 transition-colors">
                     <LogOut className="w-5 h-5" />
@@ -85,6 +80,18 @@ export default function Navbar() {
               </>
             ) : (
               <>
+                <button onClick={scrollToFeatures} className={navLink}>
+                  Features
+                </button>
+                <Link to="/satellite" className={navLink}>
+                  Green Map
+                </Link>
+                <Link to="/marketplace" className={navLink}>
+                  Marketplace
+                </Link>
+                <Link to="/recycle" className={navLink}>
+                  Recycle
+                </Link>
                 <Link to="/login" className={navLink}>
                   Login
                 </Link>
@@ -108,9 +115,6 @@ export default function Navbar() {
         <div className="md:hidden bg-white border-t border-gray-100 px-4 py-3">
           {isAuthenticated ? (
             <>
-              <Link to="/dashboard" className={navLink} onClick={() => setMobileOpen(false)}>
-                Dashboard
-              </Link>
               <Link to="/satellite" className={navLink} onClick={() => setMobileOpen(false)}>
                 Green Map
               </Link>
@@ -126,11 +130,6 @@ export default function Navbar() {
               <Link to="/messages" className={navLink} onClick={() => setMobileOpen(false)}>
                 Messages
               </Link>
-              {(user?.role === "recycler" || user?.role === "admin") && (
-                <Link to="/recycle-queue" className={navLink} onClick={() => setMobileOpen(false)}>
-                  Recycle Queue
-                </Link>
-              )}
               {user?.role === "admin" && (
                 <Link to="/admin" className={navLink} onClick={() => setMobileOpen(false)}>
                   Admin
@@ -143,6 +142,19 @@ export default function Navbar() {
             </>
           ) : (
             <>
+              <button onClick={scrollToFeatures} className={navLink}>
+                Features
+              </button>
+              <Link to="/satellite" className={navLink} onClick={() => setMobileOpen(false)}>
+                Green Map
+              </Link>
+              <Link to="/marketplace" className={navLink} onClick={() => setMobileOpen(false)}>
+                Marketplace
+              </Link>
+              <Link to="/recycle" className={navLink} onClick={() => setMobileOpen(false)}>
+                Recycle
+              </Link>
+              <hr className="my-2" />
               <Link to="/login" className={navLink} onClick={() => setMobileOpen(false)}>
                 Login
               </Link>

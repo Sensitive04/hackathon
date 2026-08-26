@@ -4,7 +4,7 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
-  role: "user" | "admin" | "recycler";
+  role: "user" | "admin";
   avatar?: string;
   carbonFootprint: number;
   createdAt: Date;

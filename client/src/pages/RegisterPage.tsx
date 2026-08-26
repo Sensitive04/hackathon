@@ -22,7 +22,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register(name, email, password);
-      navigate("/dashboard");
+      navigate("/");
     } catch (err: any) {
       toast.error(err.message || "Registration failed");
     } finally {

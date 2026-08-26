@@ -9,7 +9,7 @@ export interface MarketplaceDocument extends Document {
   price: number;
   listingType: "sale" | "free" | "recycle";
   sellerId: mongoose.Types.ObjectId;
-  status: "available" | "sold" | "recycled" | "expired";
+  status: "available" | "sold" | "expired" | "recycled";
   expiresAt: Date;
 }
 
@@ -49,7 +49,7 @@ const marketplaceSchema = new Schema<MarketplaceDocument>(
     },
     status: {
       type: String,
-      enum: ["available", "sold", "recycled", "expired"],
+      enum: ["available", "sold", "expired", "recycled"],
       default: "available",
       index: true,
     },
