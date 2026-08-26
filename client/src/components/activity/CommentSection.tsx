@@ -61,10 +61,10 @@ export default function CommentSection({ postId, currentUserId }: Props) {
   const hiddenCount = comments.length - COLLAPSE_COUNT;
 
   return (
-    <div className="mt-3 pt-3 border-t border-gray-100">
-      <div className="flex items-center gap-1.5 mb-2">
+    <div className="mt-3 pt-3 border-t border-gray-100/80">
+      <div className="flex items-center gap-1.5 mb-2.5">
         <MessageCircle className="w-3.5 h-3.5 text-gray-400" />
-        <span className="text-xs text-gray-400 font-medium">
+        <span className="text-xs text-gray-400 font-semibold">
           {comments.length > 0 ? `${comments.length} comment${comments.length !== 1 ? "s" : ""}` : "Comments"}
         </span>
       </div>
@@ -72,7 +72,7 @@ export default function CommentSection({ postId, currentUserId }: Props) {
       {!loading && comments.length > COLLAPSE_COUNT && !showAll && (
         <button
           onClick={() => setShowAll(true)}
-          className="text-xs text-eco-primary hover:underline mb-2 font-medium"
+          className="text-xs text-eco-primary hover:text-eco-secondary mb-2.5 font-semibold transition-colors duration-200"
         >
           View all {comments.length} comments
         </button>
@@ -83,18 +83,18 @@ export default function CommentSection({ postId, currentUserId }: Props) {
       )}
 
       {!loading && visibleComments.length > 0 && (
-        <div className="space-y-2 mb-2">
+        <div className="space-y-2.5 mb-3">
           {visibleComments.map((c) => (
-            <div key={c._id} className="flex items-start gap-2">
-              <div className="w-6 h-6 bg-eco-primary rounded-full flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0 mt-0.5">
+            <div key={c._id} className="flex items-start gap-2 group">
+              <div className="w-6 h-6 bg-gradient-to-br from-eco-primary/80 to-emerald-400 rounded-full flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0 mt-0.5">
                 {c.userId.name?.charAt(0)?.toUpperCase() || "U"}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-xs font-medium text-gray-900">{c.userId.name}</span>
+                  <span className="text-xs font-semibold text-gray-900">{c.userId.name}</span>
                   <span className="text-[10px] text-gray-400">{timeAgo(c.createdAt)}</span>
                 </div>
-                <p className="text-xs text-gray-700 whitespace-pre-wrap">{c.text}</p>
+                <p className="text-xs text-gray-600 whitespace-pre-wrap leading-relaxed">{c.text}</p>
               </div>
             </div>
           ))}
@@ -105,10 +105,10 @@ export default function CommentSection({ postId, currentUserId }: Props) {
         <p className="text-xs text-gray-400 py-1">No comments yet.</p>
       )}
 
-      <form onSubmit={handleSubmit} className="flex gap-2 mt-1">
+      <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
         <input
           type="text"
-          className="flex-1 text-xs input-field !py-1.5"
+          className="flex-1 text-xs input-field !py-2"
           placeholder="Write a comment..."
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
@@ -116,7 +116,7 @@ export default function CommentSection({ postId, currentUserId }: Props) {
         <button
           type="submit"
           disabled={!newComment.trim() || submitting}
-          className="text-eco-primary disabled:text-gray-300 transition-colors"
+          className="p-2 text-eco-primary disabled:text-gray-300 hover:bg-eco-light rounded-lg transition-all duration-200 active:scale-90"
         >
           <Send className="w-3.5 h-3.5" />
         </button>

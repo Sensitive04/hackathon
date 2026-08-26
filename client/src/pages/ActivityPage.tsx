@@ -30,7 +30,6 @@ export default function ActivityPage() {
 
   const feedRef = useRef<HTMLDivElement>(null);
 
-  // Split chats into active and ended
   const activeChats = useMemo(
     () => myCampaignChats.filter((c) => c.postId?.campaignStatus !== "ended"),
     [myCampaignChats]
@@ -40,7 +39,6 @@ export default function ActivityPage() {
     [myCampaignChats]
   );
 
-  // Determine if the active chat is ended
   const activeChatIsEnded = useMemo(() => {
     if (!activeCampaignId) return false;
     const chat = myCampaignChats.find((c) => c._id === activeCampaignId);
@@ -74,7 +72,6 @@ export default function ActivityPage() {
     loadFeed(1);
   }, [feedType]);
 
-  // real-time feed events
   useEffect(() => {
     return on("post:new", (post: Post) => {
       if ((post.userId as any)?._id === user?.id) return;
@@ -84,7 +81,6 @@ export default function ActivityPage() {
     });
   }, [on, user?.id]);
 
-  // campaign group chats
   const loadCampaignChats = useCallback(async () => {
     if (!token) return;
     try {
@@ -116,7 +112,6 @@ export default function ActivityPage() {
     });
   }, [loadCampaignChats, addCampaignChatOptimistic]);
 
-  // Handle campaign ended event — refresh chats to move to ended section
   useEffect(() => {
     return on("campaign:ended", () => {
       loadCampaignChats();
@@ -154,7 +149,6 @@ export default function ActivityPage() {
     );
   }, [on]);
 
-  // chat unread notifications
   useEffect(() => {
     return on("chat:notify", ({ conversationId }: any) => {
       setUnread((prev) => ({ ...prev, [conversationId]: (prev[conversationId] || 0) + 1 }));
@@ -180,28 +174,16 @@ export default function ActivityPage() {
   ];
 
   return (
-    <div className="relative min-h-screen">
-      <div
-        aria-hidden
-        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url(/bg.jpg)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
-      <div aria-hidden className="fixed inset-0 -z-10 backdrop-blur-[2px]" style={{ backgroundColor: "rgba(15, 35, 25, 0.6)" }} />
-
+    <div className="min-h-screen">
       <div className="page-container">
-      <div className="mb-6">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center">
+      <div className="page-header">
+        <div className="page-header-row">
+          <div className="page-header-icon bg-gradient-to-br from-amber-500 to-orange-500 shadow-sm">
             <ClipboardList className="w-5 h-5 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white drop-shadow">Activity</h1>
+          <h1 className="page-header-title">Activity</h1>
         </div>
-        <p className="text-emerald-50/90">Share updates and chat with the community.</p>
+        <p className="page-header-desc">Share updates and chat with the community.</p>
       </div>
 
       <div className="grid lg:grid-cols-[1fr_360px] gap-6">
@@ -209,15 +191,15 @@ export default function ActivityPage() {
         <div ref={feedRef}>
           {/* Feed tabs */}
           <div className="flex flex-wrap items-center gap-2 mb-4">
-            <div className="flex bg-white/80 backdrop-blur rounded-xl p-1 shadow-sm">
+            <div className="flex bg-white rounded-xl p-1 shadow-sm border border-slate-200/60">
               {feedTabs.map((t) => (
                 <button
                   key={t.key}
                   onClick={() => setFeedType(t.key)}
-                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                  className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-all duration-200 ${
                     feedType === t.key
-                      ? "bg-eco-primary text-white shadow-sm font-medium"
-                      : "text-gray-600 hover:text-gray-900"
+                      ? "bg-eco-primary text-white shadow-sm"
+                      : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
                   }`}
                 >
                   {t.label}
@@ -225,7 +207,7 @@ export default function ActivityPage() {
               ))}
             </div>
             <div className="relative flex-1 min-w-[180px]">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">#</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">#</span>
               <input
                 value={searchTag}
                 onChange={(e) => setSearchTag(e.target.value)}
@@ -250,8 +232,10 @@ export default function ActivityPage() {
 
           {posts.length === 0 && !loading ? (
             <div className="card text-center py-16">
-              <ClipboardList className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-400">
+              <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <ClipboardList className="w-7 h-7 text-gray-300" />
+              </div>
+              <p className="text-gray-400 font-medium">
                 {feedType === "my-campaigns"
                   ? "You haven't created any campaigns yet."
                   : feedType === "ended"
@@ -293,10 +277,9 @@ export default function ActivityPage() {
           <div className="sticky top-20">
             {(activeChats.length > 0 || endedChats.length > 0) && socket.current ? (
               <div>
-                {/* Active Campaign Chats */}
                 {activeChats.length > 0 && (
                   <>
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase mb-1.5 px-1">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 px-1">
                       Active Chats
                     </p>
                     <div className="space-y-1 mb-3">
@@ -304,15 +287,15 @@ export default function ActivityPage() {
                         <button
                           key={c._id}
                           onClick={() => setActiveCampaignId(c._id)}
-                          className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-colors flex items-center justify-between ${
+                          className={`w-full text-left text-xs px-3 py-2.5 rounded-xl transition-all duration-200 flex items-center justify-between font-medium ${
                             activeCampaignId === c._id
-                              ? "bg-emerald-500 text-white"
-                              : "bg-white/70 text-gray-700 hover:bg-emerald-50"
+                              ? "bg-emerald-500 text-white shadow-sm"
+                              : "bg-white text-gray-700 hover:bg-emerald-50 border border-slate-200/60 shadow-card"
                           }`}
                         >
                           <span className="truncate">{c.title || "Campaign"}</span>
                           {unread[c._id] > 0 && (
-                            <span className="ml-2 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0">
+                            <span className="ml-2 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0 font-bold">
                               {unread[c._id]}
                             </span>
                           )}
@@ -322,10 +305,9 @@ export default function ActivityPage() {
                   </>
                 )}
 
-                {/* Ended Campaign Chats */}
                 {endedChats.length > 0 && (
                   <>
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase mb-1.5 px-1 flex items-center gap-1">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 px-1 flex items-center gap-1">
                       <Archive className="w-3 h-3" />
                       Ended
                     </p>
@@ -334,10 +316,10 @@ export default function ActivityPage() {
                         <button
                           key={c._id}
                           onClick={() => setActiveCampaignId(c._id)}
-                          className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-colors ${
+                          className={`w-full text-left text-xs px-3 py-2.5 rounded-xl transition-all duration-200 font-medium ${
                             activeCampaignId === c._id
-                              ? "bg-gray-500 text-white"
-                              : "bg-white/50 text-gray-500 hover:bg-gray-100"
+                              ? "bg-gray-500 text-white shadow-sm"
+                              : "bg-white text-gray-500 hover:bg-gray-100 border border-slate-200/60 shadow-card"
                           }`}
                         >
                           <span className="truncate">{c.title || "Campaign"}</span>
@@ -347,7 +329,6 @@ export default function ActivityPage() {
                   </>
                 )}
 
-                {/* Chat Panel */}
                 {activeCampaignId && (
                   <ChatPanel
                     key={activeCampaignId}
@@ -365,9 +346,11 @@ export default function ActivityPage() {
                 )}
               </div>
             ) : (
-              <div className="bg-white/60 backdrop-blur rounded-2xl border border-gray-200 p-6 text-center">
-                <MessageCircle className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-xs text-gray-400">
+              <div className="bg-white rounded-2xl border border-slate-200/60 p-6 text-center shadow-card">
+                <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <MessageCircle className="w-6 h-6 text-gray-300" />
+                </div>
+                <p className="text-xs text-gray-400 font-medium">
                   No campaign chats yet. Start or join a campaign to chat!
                 </p>
               </div>
@@ -380,11 +363,11 @@ export default function ActivityPage() {
       {!showChat && (activeChats.length > 0 || endedChats.length > 0) && (
         <button
           onClick={() => setShowChat(true)}
-          className="lg:hidden fixed bottom-6 right-6 z-40 btn-primary !rounded-full !p-4 shadow-xl relative"
+          className="lg:hidden fixed bottom-6 right-6 z-40 btn-primary !rounded-full !p-4 shadow-float relative active:scale-90"
         >
           <MessageCircle className="w-6 h-6" />
           {totalUnread > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[11px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1">
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[11px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1 shadow-sm">
               {totalUnread}
             </span>
           )}
@@ -395,21 +378,20 @@ export default function ActivityPage() {
         <div className="lg:hidden fixed inset-x-0 bottom-0 z-50 px-3 pb-3">
           {socket.current && (
             <div>
-              {/* Mobile chat switcher — always show list */}
               <div className="space-y-1 mb-2">
                 {activeChats.map((c) => (
                   <button
                     key={c._id}
                     onClick={() => setActiveCampaignId(c._id)}
-                    className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-colors flex items-center justify-between ${
+                    className={`w-full text-left text-xs px-3 py-2.5 rounded-xl transition-all duration-200 flex items-center justify-between font-medium ${
                       activeCampaignId === c._id
-                        ? "bg-emerald-500 text-white"
-                        : "bg-white/80 text-gray-600 border border-gray-200"
+                        ? "bg-emerald-500 text-white shadow-sm"
+                        : "bg-white text-gray-600 border border-slate-200/80 shadow-card"
                     }`}
                   >
                     <span className="truncate">{c.title || "Campaign"}</span>
                     {unread[c._id] > 0 && (
-                      <span className="ml-2 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0">
+                      <span className="ml-2 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0 font-bold">
                         {unread[c._id]}
                       </span>
                     )}
@@ -419,10 +401,10 @@ export default function ActivityPage() {
                   <button
                     key={c._id}
                     onClick={() => setActiveCampaignId(c._id)}
-                    className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-colors ${
+                    className={`w-full text-left text-xs px-3 py-2.5 rounded-xl transition-all duration-200 font-medium ${
                       activeCampaignId === c._id
-                        ? "bg-gray-500 text-white"
-                        : "bg-white/50 text-gray-500 border border-gray-200"
+                        ? "bg-gray-500 text-white shadow-sm"
+                        : "bg-white text-gray-500 border border-slate-200/60 shadow-card"
                     }`}
                   >
                     <span className="truncate">{c.title || "Campaign"}</span>

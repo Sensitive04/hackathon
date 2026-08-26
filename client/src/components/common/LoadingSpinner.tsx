@@ -12,9 +12,14 @@ export default function LoadingSpinner({
   fullPage = false,
 }: LoadingSpinnerProps) {
   const content = (
-    <div className="flex flex-col items-center gap-3">
-      <Loader2 className="animate-spin text-eco-primary" size={size} />
-      {text && <p className="text-gray-500 text-sm">{text}</p>}
+    <div className="flex flex-col items-center gap-3 animate-fade-in">
+      <div className="relative">
+        <Loader2 className="animate-spin text-eco-primary" size={size} />
+        <div className="absolute inset-0 animate-pulse-gentle">
+          <Loader2 className="text-eco-primary/20" size={size} />
+        </div>
+      </div>
+      {text && <p className="text-gray-500 text-sm font-medium">{text}</p>}
     </div>
   );
 

@@ -94,7 +94,6 @@ export default function RecycleSuggestPage() {
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
-        // Strip the data:image/...;base64, prefix
         const base64 = result.split(",")[1];
         resolve(base64);
       };
@@ -125,19 +124,19 @@ export default function RecycleSuggestPage() {
 
   return (
     <div className="page-container">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
+      <div className="page-header">
+        <div className="page-header-row">
+          <div className="page-header-icon bg-gradient-to-br from-green-500 to-emerald-500 shadow-sm">
             <Recycle className="w-5 h-5 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">AI Recycle Suggestion</h1>
+          <h1 className="page-header-title">AI Recycle Suggestion</h1>
         </div>
-        <p className="text-gray-500">
+        <p className="page-header-desc">
           Describe or photograph an item to get AI-powered recycling, reuse, and DIY crafting guidance.
         </p>
       </div>
 
-      <form onSubmit={handleAnalyze} className="card mb-8 space-y-4">
+      <form onSubmit={handleAnalyze} className="card mb-8 space-y-4 animate-fade-in">
         {/* Image Upload Area */}
         <div>
           <label className="label mb-2 block">Photo (optional)</label>
@@ -146,12 +145,12 @@ export default function RecycleSuggestPage() {
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="max-h-48 rounded-xl border border-gray-200"
+                className="max-h-48 rounded-xl border border-gray-200 shadow-sm"
               />
               <button
                 type="button"
                 onClick={removeImage}
-                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-all duration-200 shadow-sm active:scale-90"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -162,16 +161,18 @@ export default function RecycleSuggestPage() {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+              className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${
                 dragOver
-                  ? "border-eco-primary bg-eco-light"
-                  : "border-gray-200 hover:border-gray-300"
+                  ? "border-eco-primary bg-eco-light/50 shadow-glow-green"
+                  : "border-gray-200 hover:border-eco-primary/40 hover:bg-gray-50/50"
               }`}
             >
-              <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+              <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <Upload className="w-6 h-6 text-gray-400" />
+              </div>
               <p className="text-sm text-gray-500">
                 Drag and drop an image here, or{" "}
-                <span className="text-eco-primary font-medium">browse</span>
+                <span className="text-eco-primary font-semibold">browse</span>
               </p>
               <p className="text-xs text-gray-400 mt-1">
                 PNG, JPG, WEBP up to 10MB
@@ -195,7 +196,7 @@ export default function RecycleSuggestPage() {
           <button
             type="button"
             onClick={() => cameraInputRef.current?.click()}
-            className="btn-secondary flex items-center gap-2 text-sm whitespace-nowrap"
+            className="btn-secondary text-sm whitespace-nowrap"
           >
             <Camera className="w-4 h-4" />
             Take Photo
@@ -212,7 +213,7 @@ export default function RecycleSuggestPage() {
             }}
           />
           <div className="h-px bg-gray-200 flex-1" />
-          <span className="text-xs text-gray-400">or describe below</span>
+          <span className="text-xs text-gray-400 font-medium">or describe below</span>
           <div className="h-px bg-gray-200 flex-1" />
         </div>
 
@@ -229,7 +230,7 @@ export default function RecycleSuggestPage() {
 
         <button
           type="submit"
-          className="btn-primary flex items-center gap-2"
+          className="btn-primary"
           disabled={loading || (!description.trim() && !imageFile)}
         >
           <Search className="w-4 h-4" />
@@ -241,28 +242,28 @@ export default function RecycleSuggestPage() {
       {error && <ErrorDisplay message={error} />}
 
       {result && !loading && (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-fade-in">
           {/* Recycling Analysis */}
           <div className="card">
             <div className="flex items-center gap-3 mb-4">
-              <h2 className="text-xl font-bold text-gray-900">{result.itemName}</h2>
+              <h2 className="text-xl font-bold text-gray-900 tracking-tight">{result.itemName}</h2>
               {result.recyclable ? (
-                <span className="flex items-center gap-1 text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                  <CheckCircle className="w-4 h-4" /> Recyclable
+                <span className="badge bg-green-50 text-green-600 border border-green-200/60">
+                  <CheckCircle className="w-3.5 h-3.5" /> Recyclable
                 </span>
               ) : (
-                <span className="flex items-center gap-1 text-sm text-red-600 bg-red-50 px-3 py-1 rounded-full">
-                  <XCircle className="w-4 h-4" /> Not Recyclable
+                <span className="badge bg-red-50 text-red-600 border border-red-200/60">
+                  <XCircle className="w-3.5 h-3.5" /> Not Recyclable
                 </span>
               )}
             </div>
 
             {result.materials.length > 0 && (
               <div className="mb-4">
-                <h3 className="font-semibold text-gray-700 mb-2">Materials</h3>
-                <div className="flex flex-wrap gap-2">
+                <h3 className="font-semibold text-gray-700 mb-2 text-sm">Materials</h3>
+                <div className="flex flex-wrap gap-1.5">
                   {result.materials.map((m, i) => (
-                    <span key={i} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                    <span key={i} className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-sm font-medium">
                       {m}
                     </span>
                   ))}
@@ -271,39 +272,46 @@ export default function RecycleSuggestPage() {
             )}
 
             <div className="mb-4">
-              <h3 className="font-semibold text-gray-700 mb-2">Disposal Method</h3>
-              <p className="text-gray-600">{result.disposalMethod}</p>
+              <h3 className="font-semibold text-gray-700 mb-2 text-sm">Disposal Method</h3>
+              <p className="text-gray-600 bg-slate-50 p-3 rounded-xl text-sm leading-relaxed">{result.disposalMethod}</p>
             </div>
 
             {result.steps.length > 0 && (
               <div className="mb-4">
-                <h3 className="font-semibold text-gray-700 mb-2">Steps</h3>
+                <h3 className="font-semibold text-gray-700 mb-2 text-sm">Steps</h3>
                 <ol className="space-y-2">
                   {result.steps.map((step, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                      <ArrowRight className="w-4 h-4 text-eco-primary mt-0.5 flex-shrink-0" />
-                      {step}
+                    <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
+                      <div className="w-5 h-5 bg-eco-light text-eco-primary rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                        {i + 1}
+                      </div>
+                      <span className="leading-relaxed">{step}</span>
                     </li>
                   ))}
                 </ol>
               </div>
             )}
 
-            <div className="border-t pt-4 mt-4">
-              <h3 className="font-semibold text-gray-700 mb-2">Environmental Impact</h3>
-              <p className="text-gray-600 text-sm">{result.environmentalImpact}</p>
+            <div className="border-t border-gray-100 pt-4 mt-4">
+              <h3 className="font-semibold text-gray-700 mb-2 text-sm">Environmental Impact</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">{result.environmentalImpact}</p>
             </div>
           </div>
 
           {/* Reuse Ideas */}
           {result.reusable && result.reuseIdeas.length > 0 && (
-            <div className="card bg-emerald-50 border-emerald-200">
-              <h3 className="font-semibold text-emerald-800 mb-3">Reuse Ideas</h3>
+            <div className="card bg-emerald-50/80 border-emerald-200/60">
+              <h3 className="font-semibold text-emerald-800 mb-3 flex items-center gap-2 text-sm">
+                <div className="w-7 h-7 bg-emerald-100 rounded-lg flex items-center justify-center">
+                  <Recycle className="w-3.5 h-3.5 text-emerald-700" />
+                </div>
+                Reuse Ideas
+              </h3>
               <ul className="space-y-2">
                 {result.reuseIdeas.map((idea, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-emerald-700">
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-emerald-700">
                     <Recycle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                    {idea}
+                    <span className="leading-relaxed">{idea}</span>
                   </li>
                 ))}
               </ul>
@@ -312,10 +320,12 @@ export default function RecycleSuggestPage() {
 
           {/* Homemade / DIY Item Ideas */}
           {result.homemadeIdeas && result.homemadeIdeas.length > 0 && (
-            <div className="card bg-amber-50 border-amber-200">
-              <div className="flex items-center gap-2 mb-4">
-                <Hammer className="w-5 h-5 text-amber-700" />
-                <h3 className="font-semibold text-amber-800">
+            <div className="card bg-amber-50/80 border-amber-200/60">
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                  <Hammer className="w-4 h-4 text-amber-700" />
+                </div>
+                <h3 className="font-semibold text-amber-800 tracking-tight">
                   DIY / Homemade Item Ideas
                 </h3>
               </div>
@@ -323,21 +333,21 @@ export default function RecycleSuggestPage() {
                 {result.homemadeIdeas.map((idea, i) => (
                   <div
                     key={i}
-                    className="bg-white rounded-xl p-4 border border-amber-100"
+                    className="bg-white rounded-xl p-4 border border-amber-100/80 shadow-sm"
                   >
-                    <h4 className="font-bold text-gray-900 mb-2">{idea.title}</h4>
-                    <p className="text-sm text-gray-600 mb-3">{idea.description}</p>
+                    <h4 className="font-bold text-gray-900 mb-2 tracking-tight">{idea.title}</h4>
+                    <p className="text-sm text-gray-600 mb-3 leading-relaxed">{idea.description}</p>
 
                     {idea.materials.length > 0 && (
                       <div className="mb-3">
-                        <p className="text-xs font-medium text-gray-500 uppercase mb-1">
+                        <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
                           Materials Needed
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {idea.materials.map((m, j) => (
                             <span
                               key={j}
-                              className="bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded-full"
+                              className="bg-amber-100 text-amber-700 text-xs px-2.5 py-0.5 rounded-full font-medium"
                             >
                               {m}
                             </span>
@@ -348,7 +358,7 @@ export default function RecycleSuggestPage() {
 
                     {idea.steps.length > 0 && (
                       <div>
-                        <p className="text-xs font-medium text-gray-500 uppercase mb-1">
+                        <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
                           How to Make It
                         </p>
                         <ol className="space-y-1.5">
@@ -360,7 +370,7 @@ export default function RecycleSuggestPage() {
                               <span className="w-4 h-4 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
                                 {j + 1}
                               </span>
-                              {step}
+                              <span className="leading-relaxed">{step}</span>
                             </li>
                           ))}
                         </ol>

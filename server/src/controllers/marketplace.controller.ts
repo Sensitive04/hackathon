@@ -72,7 +72,12 @@ export const getMarketplace = async (
     const limit = parseInt(req.query.limit as string) || 20;
     const skip = (page - 1) * limit;
 
-    const filter: any = { status: status || "available" };
+    const filter: any = {};
+    if (status === "all") {
+      // no status filter — return items of all statuses
+    } else {
+      filter.status = status || "available";
+    }
     if (category) filter.category = category;
     if (listingType) filter.listingType = listingType;
     if (search) {
@@ -86,6 +91,7 @@ export const getMarketplace = async (
     const [items, total] = await Promise.all([
       Marketplace.find(filter)
         .populate("sellerId", "name avatar")
+        .populate("pendingBuyerId", "name avatar")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
@@ -103,10 +109,9 @@ export const getItem = async (
   res: Response
 ): Promise<void> => {
   try {
-    const item = await Marketplace.findById(req.params.id).populate(
-      "sellerId",
-      "name avatar"
-    );
+    const item = await Marketplace.findById(req.params.id)
+      .populate("sellerId", "name avatar")
+      .populate("pendingBuyerId", "name avatar");
     if (!item) {
       res.status(404).json({ error: "Item not found" });
       return;
@@ -114,6 +119,98 @@ export const getItem = async (
     res.json(item);
   } catch {
     res.status(500).json({ error: "Failed to fetch item" });
+  }
+};
+
+export const contactSeller = async (
+  req: IAuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const item = await Marketplace.findById(req.params.id);
+    if (!item) {
+      res.status(404).json({ error: "Item not found" });
+      return;
+    }
+    if (item.listingType !== "sale") {
+      res.status(400).json({ error: "Contact seller is only for sale items" });
+      return;
+    }
+    if (item.status !== "available") {
+      res.status(400).json({ error: "Item is no longer available" });
+      return;
+    }
+    if (item.sellerId.toString() === req.user!.id) {
+      res.status(400).json({ error: "Cannot contact yourself" });
+      return;
+    }
+
+    item.status = "pending";
+    item.pendingBuyerId = req.user!.id as any;
+    await item.save();
+
+    res.json({ message: "Seller notified", item });
+  } catch {
+    res.status(500).json({ error: "Failed to contact seller" });
+  }
+};
+
+export const confirmSale = async (
+  req: IAuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const item = await Marketplace.findById(id);
+    if (!item) {
+      res.status(404).json({ error: "Item not found" });
+      return;
+    }
+    if (item.sellerId.toString() !== req.user!.id) {
+      res.status(403).json({ error: "Only the seller can confirm this sale" });
+      return;
+    }
+    if (item.status !== "pending") {
+      res.status(400).json({ error: "Item is not pending a sale" });
+      return;
+    }
+
+    item.status = "sold";
+    await item.save();
+
+    res.json({ message: "Sale confirmed", item });
+  } catch {
+    res.status(500).json({ error: "Failed to confirm sale" });
+  }
+};
+
+export const cancelSale = async (
+  req: IAuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const item = await Marketplace.findById(id);
+    if (!item) {
+      res.status(404).json({ error: "Item not found" });
+      return;
+    }
+    if (item.sellerId.toString() !== req.user!.id) {
+      res.status(403).json({ error: "Only the seller can cancel this sale" });
+      return;
+    }
+    if (item.status !== "pending") {
+      res.status(400).json({ error: "Item is not pending a sale" });
+      return;
+    }
+
+    item.status = "available";
+    item.pendingBuyerId = undefined;
+    await item.save();
+
+    res.json({ message: "Sale cancelled", item });
+  } catch {
+    res.status(500).json({ error: "Failed to cancel sale" });
   }
 };
 
@@ -133,6 +230,10 @@ export const purchaseItem = async (
     }
     if (item.sellerId.toString() === req.user!.id) {
       res.status(400).json({ error: "Cannot purchase your own item" });
+      return;
+    }
+    if (item.listingType === "sale") {
+      res.status(400).json({ error: "Sale items require seller confirmation. Use Contact Seller instead." });
       return;
     }
 

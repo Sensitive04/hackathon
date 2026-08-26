@@ -8,11 +8,17 @@ export const getConversations = async (
   res: Response
 ): Promise<void> => {
   try {
-    const conversations = await Conversation.find({
-      participants: req.user!.id,
-    })
+    const { listingId } = req.query;
+    const query: any = { participants: req.user!.id };
+    if (listingId) query.listingId = listingId;
+
+    const conversations = await Conversation.find(query)
       .populate("participants", "name avatar role")
-      .populate("listingId", "title images listingType")
+      .populate({
+        path: "listingId",
+        select: "title images listingType status sellerId pendingBuyerId",
+        populate: { path: "sellerId pendingBuyerId", select: "name avatar" },
+      })
       .sort({ lastMessageAt: -1 });
 
     const result = conversations.map((c) => {
@@ -68,6 +74,10 @@ export const createConversation = async (
     const { participantId, listingId } = req.body;
     if (!participantId) {
       res.status(400).json({ error: "participantId is required" });
+      return;
+    }
+    if (participantId === req.user!.id) {
+      res.status(400).json({ error: "Cannot create a conversation with yourself" });
       return;
     }
 
@@ -162,6 +172,16 @@ export const markRead = async (
 ): Promise<void> => {
   try {
     const { conversationId } = req.params;
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      res.status(404).json({ error: "Conversation not found" });
+      return;
+    }
+    if (!conversation.participants.includes(req.user!.id as any)) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
     await Message.updateMany(
       {
         conversationId,

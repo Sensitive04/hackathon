@@ -76,14 +76,14 @@ export default function CreatePost({ user, onCreated }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="card mb-4">
+    <form onSubmit={handleSubmit} className="card mb-4 animate-fade-in">
       <div className="flex items-start gap-3">
-        <div className="w-9 h-9 bg-eco-primary rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+        <div className="w-10 h-10 bg-gradient-to-br from-eco-primary to-emerald-400 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-sm">
           {user.name?.charAt(0)?.toUpperCase() || "U"}
         </div>
         <div className="flex-1 min-w-0">
           <textarea
-            className="input-field resize-none text-sm"
+            className="input-field resize-none text-sm !py-3"
             rows={3}
             placeholder="Share an update with the community..."
             value={content}
@@ -92,18 +92,18 @@ export default function CreatePost({ user, onCreated }: Props) {
           />
 
           {images.length > 0 && (
-            <div className="flex gap-2 mt-2 flex-wrap">
+            <div className="flex gap-2 mt-3 flex-wrap">
               {images.map((img, i) => (
                 <div key={i} className="relative group">
                   <img
                     src={img}
-                    className="w-16 h-16 object-cover rounded-lg border"
+                    className="w-16 h-16 object-cover rounded-xl border border-gray-200 shadow-sm"
                     alt=""
                   />
                   <button
                     type="button"
                     onClick={() => removeImage(i)}
-                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-sm hover:bg-red-600"
                   >
                     x
                   </button>
@@ -112,10 +112,10 @@ export default function CreatePost({ user, onCreated }: Props) {
             </div>
           )}
 
-          <div className="flex flex-wrap items-center gap-2 mt-2">
+          <div className="flex flex-wrap items-center gap-2 mt-3">
             <input
               type="text"
-              className="input-field text-xs flex-1 min-w-[140px]"
+              className="input-field text-xs flex-1 min-w-[140px] !py-2"
               placeholder="Hashtags (comma-separated)"
               value={hashtags}
               onChange={(e) => setHashtags(e.target.value)}
@@ -123,9 +123,9 @@ export default function CreatePost({ user, onCreated }: Props) {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border bg-white text-gray-500 border-gray-200 hover:border-emerald-300 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-xl border border-gray-200 bg-white text-gray-500 hover:border-emerald-300 hover:text-emerald-600 transition-all duration-200 active:scale-95"
             >
-              <ImagePlus className="w-3 h-3" />
+              <ImagePlus className="w-3.5 h-3.5" />
               Photo
             </button>
             <input
@@ -139,18 +139,18 @@ export default function CreatePost({ user, onCreated }: Props) {
             <button
               type="button"
               onClick={() => setIsCampaign(!isCampaign)}
-              className={`flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+              className={`flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-xl border transition-all duration-200 active:scale-95 ${
                 isCampaign
-                  ? "bg-emerald-100 text-emerald-700 border-emerald-300"
-                  : "bg-white text-gray-500 border-gray-200 hover:border-emerald-300"
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-300 shadow-sm"
+                  : "bg-white text-gray-500 border-gray-200 hover:border-emerald-300 hover:text-emerald-600"
               }`}
             >
-              <Leaf className="w-3 h-3" />
+              <Leaf className="w-3.5 h-3.5" />
               Campaign
             </button>
             {isCampaign && (
-              <div className="flex items-center gap-1 text-xs">
-                <Users className="w-3 h-3 text-emerald-600" />
+              <div className="flex items-center gap-1.5 text-xs">
+                <Users className="w-3.5 h-3.5 text-emerald-600" />
                 <input
                   type="number"
                   min={1}
@@ -161,15 +161,15 @@ export default function CreatePost({ user, onCreated }: Props) {
                   }
                   className="input-field !py-1 !px-2 w-16 text-center text-xs"
                 />
-                <span className="text-gray-500">needed</span>
+                <span className="text-gray-500 font-medium">needed</span>
               </div>
             )}
             <button
               type="submit"
               disabled={loading || !content.trim()}
-              className="btn-primary text-xs py-1.5 px-3"
+              className="btn-primary text-xs !py-2 !px-3.5"
             >
-              <Send className="w-3 h-3" />
+              <Send className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>

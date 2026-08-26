@@ -134,25 +134,25 @@ export default function AdminPage() {
 
   return (
     <div className="page-container">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center">
+      <div className="page-header">
+        <div className="page-header-row">
+          <div className="page-header-icon bg-gradient-to-br from-red-500 to-red-600 shadow-sm">
             <Shield className="w-5 h-5 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          <h1 className="page-header-title">Admin Dashboard</h1>
         </div>
-        <p className="text-gray-500">Manage users, listings, and platform settings.</p>
+        <p className="page-header-desc">Manage users, listings, and platform settings.</p>
       </div>
 
-      <div className="flex gap-2 mb-6 overflow-x-auto">
+      <div className="flex gap-1.5 mb-6 overflow-x-auto">
         {tabs.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm whitespace-nowrap transition-all duration-200 active:scale-[0.97] ${
               tab === t.key
-                ? "bg-eco-primary text-white"
-                : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                ? "bg-eco-primary text-white shadow-sm"
+                : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 hover:border-gray-300"
             }`}
           >
             <t.icon className="w-4 h-4" />
@@ -162,49 +162,49 @@ export default function AdminPage() {
       </div>
 
       {tab === "stats" && stats && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in">
           {[
-            { label: "Total Users", value: stats.totalUsers, color: "bg-blue-500" },
-            { label: "Admins", value: stats.adminCount, color: "bg-red-500" },
-            { label: "Regular Users", value: stats.userCount, color: "bg-green-500" },
-            { label: "Total Listings", value: stats.totalListings, color: "bg-amber-500" },
-            { label: "Active Listings", value: stats.activeListings, color: "bg-teal-500" },
-            { label: "Sold Items", value: stats.soldListings, color: "bg-blue-600" },
-            { label: "Recycle Listings", value: stats.recycleListings, color: "bg-emerald-500" },
-            { label: "Recycled Items", value: stats.recycledListings, color: "bg-teal-600" },
+            { label: "Total Users", value: stats.totalUsers, color: "from-blue-500 to-blue-600" },
+            { label: "Admins", value: stats.adminCount, color: "from-red-500 to-red-600" },
+            { label: "Regular Users", value: stats.userCount, color: "from-green-500 to-emerald-500" },
+            { label: "Total Listings", value: stats.totalListings, color: "from-amber-500 to-orange-500" },
+            { label: "Active Listings", value: stats.activeListings, color: "from-teal-500 to-teal-600" },
+            { label: "Sold Items", value: stats.soldListings, color: "from-blue-600 to-indigo-600" },
+            { label: "Recycle Listings", value: stats.recycleListings, color: "from-emerald-500 to-green-500" },
+            { label: "Recycled Items", value: stats.recycledListings, color: "from-teal-600 to-cyan-600" },
           ].map((s) => (
-            <div key={s.label} className="card">
-              <div className={`w-8 h-8 ${s.color} rounded-lg mb-2`} />
-              <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-              <p className="text-sm text-gray-500">{s.label}</p>
+            <div key={s.label} className="card group hover:-translate-y-0.5">
+              <div className={`w-10 h-10 bg-gradient-to-br ${s.color} rounded-xl mb-3 shadow-sm group-hover:shadow-md transition-shadow duration-300`} />
+              <p className="text-2xl font-bold text-gray-900 tracking-tight">{s.value}</p>
+              <p className="text-sm text-gray-500 mt-0.5">{s.label}</p>
             </div>
           ))}
         </div>
       )}
 
       {tab === "users" && (
-        <div className="card overflow-hidden p-0">
+        <div className="card overflow-hidden !p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b">
+              <thead className="bg-slate-50 border-b border-slate-100">
                 <tr>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Name</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Email</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Role</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Joined</th>
-                  <th className="text-right px-4 py-3 font-medium text-gray-600">Actions</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Name</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Email</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Role</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Joined</th>
+                  <th className="text-right px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
+              <tbody className="divide-y divide-slate-100">
                 {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 font-medium">{u.name}</td>
+                  <tr key={u.id} className="hover:bg-slate-50/50 transition-colors duration-150">
+                    <td className="px-4 py-3 font-semibold text-gray-900">{u.name}</td>
                     <td className="px-4 py-3 text-gray-500">{u.email}</td>
                     <td className="px-4 py-3">
                       <select
                         value={u.role}
                         onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                        className="text-xs rounded-lg border px-2 py-1"
+                        className="text-xs font-medium rounded-lg border border-gray-200 px-2.5 py-1.5 bg-white focus:border-eco-primary focus:ring-1 focus:ring-eco-primary/20 outline-none transition-all duration-200"
                         disabled={u.id === user?.id}
                       >
                         <option value="user">User</option>
@@ -218,7 +218,7 @@ export default function AdminPage() {
                       <button
                         onClick={() => handleDeleteUser(u.id)}
                         disabled={u.id === user?.id}
-                        className="text-red-500 hover:text-red-700 disabled:opacity-30"
+                        className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -229,24 +229,24 @@ export default function AdminPage() {
             </table>
           </div>
           {userPages > 1 && (
-            <div className="flex items-center justify-between px-4 py-3 border-t">
-              <span className="text-sm text-gray-500">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50">
+              <span className="text-sm text-gray-500 font-medium">
                 Page {userPage} of {userPages}
               </span>
-              <div className="flex gap-2">
+              <div className="flex gap-1.5">
                 <button
                   onClick={() => loadUsers(userPage - 1)}
                   disabled={userPage <= 1}
-                  className="p-1 rounded disabled:opacity-30"
+                  className="p-1.5 rounded-lg hover:bg-white hover:shadow-sm disabled:opacity-30 transition-all duration-200"
                 >
-                  <ChevronLeft className="w-5 h-5" />
+                  <ChevronLeft className="w-5 h-5 text-gray-600" />
                 </button>
                 <button
                   onClick={() => loadUsers(userPage + 1)}
                   disabled={userPage >= userPages}
-                  className="p-1 rounded disabled:opacity-30"
+                  className="p-1.5 rounded-lg hover:bg-white hover:shadow-sm disabled:opacity-30 transition-all duration-200"
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
             </div>
@@ -258,7 +258,7 @@ export default function AdminPage() {
         <div>
           <div className="flex gap-2 mb-4">
             <select
-              className="input-field w-auto"
+              className="input-field w-auto min-w-[130px]"
               value={listingTypeFilter}
               onChange={(e) => setListingTypeFilter(e.target.value)}
             >
@@ -268,45 +268,45 @@ export default function AdminPage() {
               <option value="recycle">Recycle</option>
             </select>
           </div>
-          <div className="card overflow-hidden p-0">
+          <div className="card overflow-hidden !p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b">
+              <thead className="bg-slate-50 border-b border-slate-100">
                 <tr>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Title</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Seller</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Type</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Status</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Price</th>
-                  <th className="text-right px-4 py-3 font-medium text-gray-600">Actions</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Title</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Seller</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Type</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Status</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Price</th>
+                  <th className="text-right px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
+              <tbody className="divide-y divide-slate-100">
                 {listings.map((item) => (
-                  <tr key={item._id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 font-medium">{item.title}</td>
+                  <tr key={item._id} className="hover:bg-slate-50/50 transition-colors duration-150">
+                    <td className="px-4 py-3 font-semibold text-gray-900">{item.title}</td>
                     <td className="px-4 py-3 text-gray-500">
                       {item.sellerId?.name || "Unknown"}
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`text-xs px-2 py-0.5 rounded-full ${
+                        className={`badge ${
                           item.listingType === "free"
-                            ? "bg-green-100 text-green-700"
+                            ? "bg-green-50 text-green-700 border border-green-200/60"
                             : item.listingType === "recycle"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-blue-100 text-blue-700"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                            : "bg-blue-50 text-blue-700 border border-blue-200/60"
                         }`}
                       >
                         {item.listingType}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-500">{item.status}</td>
-                    <td className="px-4 py-3">${item.price}</td>
+                    <td className="px-4 py-3 text-gray-500 font-medium">{item.status}</td>
+                    <td className="px-4 py-3 font-semibold text-gray-900">${item.price}</td>
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => handleDeleteListing(item._id)}
-                        className="text-red-500 hover:text-red-700"
+                        className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -317,24 +317,24 @@ export default function AdminPage() {
             </table>
           </div>
           {listingPages > 1 && (
-            <div className="flex items-center justify-between px-4 py-3 border-t">
-              <span className="text-sm text-gray-500">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50">
+              <span className="text-sm text-gray-500 font-medium">
                 Page {listingPage} of {listingPages}
               </span>
-              <div className="flex gap-2">
+              <div className="flex gap-1.5">
                 <button
                   onClick={() => loadListings(listingPage - 1, listingTypeFilter)}
                   disabled={listingPage <= 1}
-                  className="p-1 rounded disabled:opacity-30"
+                  className="p-1.5 rounded-lg hover:bg-white hover:shadow-sm disabled:opacity-30 transition-all duration-200"
                 >
-                  <ChevronLeft className="w-5 h-5" />
+                  <ChevronLeft className="w-5 h-5 text-gray-600" />
                 </button>
                 <button
                   onClick={() => loadListings(listingPage + 1, listingTypeFilter)}
                   disabled={listingPage >= listingPages}
-                  className="p-1 rounded disabled:opacity-30"
+                  className="p-1.5 rounded-lg hover:bg-white hover:shadow-sm disabled:opacity-30 transition-all duration-200"
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
             </div>
@@ -344,10 +344,12 @@ export default function AdminPage() {
       )}
 
       {tab === "create" && (
-        <div className="card max-w-md">
-          <div className="flex items-center gap-2 mb-6">
-            <Shield className="w-5 h-5 text-red-600" />
-            <h2 className="text-lg font-bold">Create Admin Account</h2>
+        <div className="card max-w-md animate-fade-in">
+          <div className="flex items-center gap-2.5 mb-6">
+            <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
+              <Shield className="w-4 h-4 text-red-600" />
+            </div>
+            <h2 className="text-lg font-bold tracking-tight">Create Admin Account</h2>
           </div>
           <form onSubmit={handleCreateAccount} className="space-y-4">
             <div>
@@ -381,7 +383,7 @@ export default function AdminPage() {
                 minLength={8}
               />
             </div>
-            <button type="submit" className="btn-primary w-full">
+            <button type="submit" className="btn-primary w-full !py-3">
               Create Admin Account
             </button>
           </form>

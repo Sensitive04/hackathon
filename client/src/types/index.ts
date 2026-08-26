@@ -17,6 +17,7 @@ export interface MarketplaceItem {
   price: number;
   listingType: "sale" | "free" | "recycle";
   sellerId: { _id: string; name: string; avatar?: string };
+  pendingBuyerId?: { _id: string; name: string; avatar?: string };
   status: string;
   createdAt: string;
 }
@@ -37,7 +38,7 @@ export interface RecyclingAnalysis {
 export interface Conversation {
   id: string;
   otherUser: { _id: string; name: string; avatar?: string; role: string };
-  listing?: { _id: string; title: string; images: string[]; listingType: string };
+  listing?: { _id: string; title: string; images: string[]; listingType: string; status?: string; sellerId?: { _id: string; name: string }; pendingBuyerId?: { _id: string; name: string } };
   lastMessage: string;
   lastMessageAt: string;
 }

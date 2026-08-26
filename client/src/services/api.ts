@@ -52,6 +52,24 @@ export const api = {
       headers: getHeaders(),
     }).then(handleResponse),
 
+  contactSeller: (id: string) =>
+    fetch(`${API_URL}/marketplace/${id}/contact`, {
+      method: "POST",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  confirmSale: (id: string) =>
+    fetch(`${API_URL}/marketplace/${id}/confirm-sale`, {
+      method: "POST",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  cancelSale: (id: string) =>
+    fetch(`${API_URL}/marketplace/${id}/cancel-sale`, {
+      method: "POST",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
   // Admin
   getAdminUsers: (page = 1) =>
     fetch(`${API_URL}/admin/users?page=${page}`, {
@@ -181,10 +199,14 @@ export const api = {
     }).then(handleResponse),
 
   // Messages
-  getConversations: () =>
-    fetch(`${API_URL}/messages/conversations`, {
+  getConversations: (listingId?: string) => {
+    const params = new URLSearchParams();
+    if (listingId) params.set("listingId", listingId);
+    const query = params.toString() ? `?${params}` : "";
+    return fetch(`${API_URL}/messages/conversations${query}`, {
       headers: getHeaders(),
-    }).then(handleResponse),
+    }).then(handleResponse);
+  },
 
   createConversation: (participantId: string, listingId?: string) =>
     fetch(`${API_URL}/messages/conversations`, {
