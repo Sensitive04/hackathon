@@ -514,7 +514,7 @@ export default function MarketplacePage() {
 
       {/* List Item */}
       {tab === "list" && (
-        <form onSubmit={handleList} className="card max-w-2xl animate-fade-in">
+        <form onSubmit={handleList} className="card w-full animate-fade-in">
           <h2 className="font-bold mb-4 tracking-tight text-gray-900">List an Item</h2>
           <div className="space-y-4">
             <div>
@@ -631,7 +631,7 @@ export default function MarketplacePage() {
 
       {/* Recycle Guide */}
       {tab === "recycle" && (
-        <div className="max-w-2xl">
+        <div className="w-full">
           <form onSubmit={handleRecycle} className="card mb-6">
             <h2 className="font-bold mb-4 flex items-center gap-2 tracking-tight">
               <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">

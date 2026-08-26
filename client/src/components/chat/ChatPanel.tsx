@@ -187,23 +187,23 @@ export default function ChatPanel({
 
   return (
     <div
-      className="bg-white rounded-2xl shadow-float border border-slate-200/80 overflow-hidden flex flex-col animate-scale-in"
+      className="bg-white rounded-2xl shadow-card border border-slate-100 overflow-hidden flex flex-col animate-scale-in"
       style={{ height: "480px" }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50/50">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-gray-50">
         <div className="min-w-0 flex-1">
           <h3 className="font-bold text-sm text-gray-900 truncate tracking-tight">
             {activeConv?.title || "Campaign Chat"}
           </h3>
-          <p className="text-xs text-gray-400 mt-0.5">
+          <p className="text-xs text-gray-500 mt-0.5">
             {activeConv?.participants.length || 0} members
             {activeConv && (() => {
               const onlineCount = activeConv.participants.filter((p) =>
                 isUserOnline(p._id)
               ).length;
               return onlineCount > 0 ? (
-                <span className="ml-2 text-emerald-500 font-medium">{onlineCount} online</span>
+                <span className="ml-2 text-emerald-600 font-medium">{onlineCount} online</span>
               ) : null;
             })()}
             {isEnded && (
@@ -230,7 +230,7 @@ export default function ChatPanel({
 
       {/* Member list */}
       {showMembers && activeConv && (
-        <div className="border-b border-slate-100 bg-slate-50/80 px-4 py-2.5 max-h-40 overflow-y-auto animate-fade-in-down">
+        <div className="border-b border-slate-100 bg-gray-50 px-4 py-2.5 max-h-40 overflow-y-auto animate-fade-in-down">
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
             Members ({activeConv.participants.length})
           </p>
@@ -256,7 +256,7 @@ export default function ChatPanel({
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2.5 bg-gray-50/30">
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2.5 bg-gray-50/50">
         {loading && (
           <p className="text-xs text-gray-400 text-center py-4">Loading messages...</p>
         )}
@@ -269,7 +269,7 @@ export default function ChatPanel({
           if (msg.isSystem) {
             return (
               <div key={msg._id} className="flex justify-center my-2">
-                <div className="flex items-center gap-1.5 text-[11px] text-gray-400 bg-white px-3 py-1.5 rounded-full border border-gray-100 shadow-sm">
+                <div className="flex items-center gap-1.5 text-[11px] text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full border border-slate-200/60 shadow-sm">
                   <Info className="w-3 h-3" />
                   <span className="italic">{msg.content}</span>
                 </div>
@@ -287,11 +287,11 @@ export default function ChatPanel({
                 className={`max-w-[80%] px-3.5 py-2.5 rounded-2xl text-sm ${
                   isMine
                     ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-br-md shadow-sm"
-                    : "bg-white text-gray-800 rounded-bl-md border border-gray-100 shadow-sm"
+                    : "bg-white text-gray-800 rounded-bl-md border border-slate-200/60 shadow-sm"
                 }`}
               >
                 {!isMine && (
-                  <p className="text-[10px] font-semibold opacity-60 mb-0.5">
+                  <p className="text-[10px] font-semibold text-gray-500 mb-0.5">
                     {msg.senderId.name}
                   </p>
                 )}
@@ -315,7 +315,7 @@ export default function ChatPanel({
 
       {/* Typing indicator */}
       {activeTyping && !isEnded && (
-        <div className="px-3 py-1.5 text-xs text-gray-400 italic bg-white border-t border-slate-100">
+        <div className="px-3 py-1.5 text-xs text-gray-500 italic bg-gray-50 border-t border-slate-100">
           {typingUsers[activeId!].size === 1
             ? "Someone is typing"
             : `${typingUsers[activeId!].size} people are typing`}
@@ -325,7 +325,7 @@ export default function ChatPanel({
 
       {/* Ended banner */}
       {isEnded && (
-        <div className="px-3 py-2.5 text-xs text-center text-gray-400 bg-slate-50 border-t border-slate-100 font-medium">
+        <div className="px-3 py-2.5 text-xs text-center text-gray-500 bg-gray-50 border-t border-slate-100 font-medium">
           This campaign has ended. Messaging is disabled.
         </div>
       )}
@@ -335,7 +335,7 @@ export default function ChatPanel({
         <form onSubmit={handleSend} className="flex gap-2 px-3 py-2.5 border-t border-slate-100 bg-white">
           <input
             type="text"
-            className="flex-1 text-sm input-field !py-2.5"
+            className="flex-1 text-sm !py-2.5 px-4 rounded-xl border border-slate-200/60 bg-gray-50 text-gray-900 placeholder:text-gray-400 transition-all duration-200 focus:border-eco-primary focus:ring-2 focus:ring-eco-primary/20 focus:outline-none"
             placeholder="Type a message..."
             value={input}
             onChange={handleInputChange}

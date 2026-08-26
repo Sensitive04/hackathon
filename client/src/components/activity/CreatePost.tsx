@@ -83,7 +83,7 @@ export default function CreatePost({ user, onCreated }: Props) {
         </div>
         <div className="flex-1 min-w-0">
           <textarea
-            className="input-field resize-none text-sm !py-3"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200/60 bg-gray-50 text-gray-900 placeholder:text-gray-400 resize-none text-sm transition-all duration-200 focus:border-eco-primary focus:ring-2 focus:ring-eco-primary/20 focus:outline-none hover:border-slate-300 !py-3"
             rows={3}
             placeholder="Share an update with the community..."
             value={content}
@@ -115,7 +115,7 @@ export default function CreatePost({ user, onCreated }: Props) {
           <div className="flex flex-wrap items-center gap-2 mt-3">
             <input
               type="text"
-              className="input-field text-xs flex-1 min-w-[140px] !py-2"
+              className="flex-1 text-xs !py-2 px-4 rounded-xl border border-slate-200/60 bg-gray-50 text-gray-900 placeholder:text-gray-400 transition-all duration-200 focus:border-eco-primary focus:ring-2 focus:ring-eco-primary/20 focus:outline-none min-w-[140px]"
               placeholder="Hashtags (comma-separated)"
               value={hashtags}
               onChange={(e) => setHashtags(e.target.value)}
@@ -123,7 +123,7 @@ export default function CreatePost({ user, onCreated }: Props) {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-xl border border-gray-200 bg-white text-gray-500 hover:border-emerald-300 hover:text-emerald-600 transition-all duration-200 active:scale-95"
+              className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-xl border border-slate-200/60 bg-gray-50 text-gray-600 hover:border-emerald-300 hover:text-emerald-600 transition-all duration-200 active:scale-95"
             >
               <ImagePlus className="w-3.5 h-3.5" />
               Photo
@@ -141,8 +141,8 @@ export default function CreatePost({ user, onCreated }: Props) {
               onClick={() => setIsCampaign(!isCampaign)}
               className={`flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-xl border transition-all duration-200 active:scale-95 ${
                 isCampaign
-                  ? "bg-emerald-50 text-emerald-700 border-emerald-300 shadow-sm"
-                  : "bg-white text-gray-500 border-gray-200 hover:border-emerald-300 hover:text-emerald-600"
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm"
+                  : "bg-gray-50 text-gray-600 border-slate-200/60 hover:border-emerald-300 hover:text-emerald-600"
               }`}
             >
               <Leaf className="w-3.5 h-3.5" />
@@ -159,7 +159,7 @@ export default function CreatePost({ user, onCreated }: Props) {
                   onChange={(e) =>
                     setVolunteerNeeded(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))
                   }
-                  className="input-field !py-1 !px-2 w-16 text-center text-xs"
+                  className="!py-1 !px-2 w-16 text-center text-xs rounded-lg border border-slate-200/60 bg-gray-50 text-gray-900 focus:border-eco-primary focus:ring-2 focus:ring-eco-primary/20 focus:outline-none transition-all duration-200"
                 />
                 <span className="text-gray-500 font-medium">needed</span>
               </div>

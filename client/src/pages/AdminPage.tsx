@@ -344,7 +344,7 @@ export default function AdminPage() {
       )}
 
       {tab === "create" && (
-        <div className="card max-w-md animate-fade-in">
+        <div className="card max-w-lg animate-fade-in">
           <div className="flex items-center gap-2.5 mb-6">
             <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
               <Shield className="w-4 h-4 text-red-600" />

@@ -196,7 +196,7 @@ export default function SatellitePage() {
             <Satellite className="w-8 h-8 text-gray-300" />
           </div>
           <h3 className="text-lg font-bold text-gray-400 mb-2 tracking-tight">Search a city to get started</h3>
-          <p className="text-sm text-gray-400 max-w-md mx-auto leading-relaxed">
+          <p className="text-sm text-gray-400 max-w-lg mx-auto leading-relaxed">
             Enter any city name above to view its CO&#8322; concentration levels, air quality index, and personalized tree planting recommendations.
           </p>
         </div>

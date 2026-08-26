@@ -174,8 +174,7 @@ export default function ActivityPage() {
   ];
 
   return (
-    <div className="min-h-screen">
-      <div className="page-container">
+    <div className="page-container">
       <div className="page-header">
         <div className="page-header-row">
           <div className="page-header-icon bg-gradient-to-br from-amber-500 to-orange-500 shadow-sm">
@@ -191,7 +190,7 @@ export default function ActivityPage() {
         <div ref={feedRef}>
           {/* Feed tabs */}
           <div className="flex flex-wrap items-center gap-2 mb-4">
-            <div className="flex bg-white rounded-xl p-1 shadow-sm border border-slate-200/60">
+            <div className="flex bg-white rounded-xl p-1 border border-slate-200/60 shadow-sm">
               {feedTabs.map((t) => (
                 <button
                   key={t.key}
@@ -199,7 +198,7 @@ export default function ActivityPage() {
                   className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-all duration-200 ${
                     feedType === t.key
                       ? "bg-eco-primary text-white shadow-sm"
-                      : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                      : "text-gray-500 hover:text-eco-primary hover:bg-gray-50"
                   }`}
                 >
                   {t.label}
@@ -218,7 +217,7 @@ export default function ActivityPage() {
                   }
                 }}
                 placeholder="Search hashtags (press Enter)"
-                className="w-full input-field !py-2 pl-7 text-sm"
+                className="w-full !py-2 pl-7 text-sm bg-white border border-slate-200/60 rounded-xl text-gray-900 placeholder:text-gray-400 focus:border-eco-primary focus:ring-2 focus:ring-eco-primary/20 focus:outline-none transition-all duration-200"
               />
             </div>
           </div>
@@ -233,9 +232,9 @@ export default function ActivityPage() {
           {posts.length === 0 && !loading ? (
             <div className="card text-center py-16">
               <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                <ClipboardList className="w-7 h-7 text-gray-300" />
+                <ClipboardList className="w-7 h-7 text-gray-400" />
               </div>
-              <p className="text-gray-400 font-medium">
+              <p className="text-gray-500 font-medium">
                 {feedType === "my-campaigns"
                   ? "You haven't created any campaigns yet."
                   : feedType === "ended"
@@ -266,7 +265,7 @@ export default function ActivityPage() {
           )}
 
           {hasMore && (
-            <button onClick={loadMore} disabled={loading} className="btn-secondary w-full mt-2">
+            <button onClick={loadMore} disabled={loading} className="w-full mt-2 card text-gray-700 font-semibold py-2.5 px-6 transition-all duration-200 hover:shadow-card active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed">
               {loading ? "Loading..." : "Load more"}
             </button>
           )}
@@ -290,7 +289,7 @@ export default function ActivityPage() {
                           className={`w-full text-left text-xs px-3 py-2.5 rounded-xl transition-all duration-200 flex items-center justify-between font-medium ${
                             activeCampaignId === c._id
                               ? "bg-emerald-500 text-white shadow-sm"
-                              : "bg-white text-gray-700 hover:bg-emerald-50 border border-slate-200/60 shadow-card"
+                              : "bg-white text-gray-700 hover:bg-gray-50 border border-slate-200/60 shadow-card"
                           }`}
                         >
                           <span className="truncate">{c.title || "Campaign"}</span>
@@ -319,7 +318,7 @@ export default function ActivityPage() {
                           className={`w-full text-left text-xs px-3 py-2.5 rounded-xl transition-all duration-200 font-medium ${
                             activeCampaignId === c._id
                               ? "bg-gray-500 text-white shadow-sm"
-                              : "bg-white text-gray-500 hover:bg-gray-100 border border-slate-200/60 shadow-card"
+                              : "bg-white text-gray-500 hover:bg-gray-50 border border-slate-200/60 shadow-card"
                           }`}
                         >
                           <span className="truncate">{c.title || "Campaign"}</span>
@@ -346,11 +345,11 @@ export default function ActivityPage() {
                 )}
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-slate-200/60 p-6 text-center shadow-card">
+              <div className="card p-6 text-center">
                 <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <MessageCircle className="w-6 h-6 text-gray-300" />
+                  <MessageCircle className="w-6 h-6 text-gray-400" />
                 </div>
-                <p className="text-xs text-gray-400 font-medium">
+                <p className="text-xs text-gray-500 font-medium">
                   No campaign chats yet. Start or join a campaign to chat!
                 </p>
               </div>
@@ -386,7 +385,7 @@ export default function ActivityPage() {
                     className={`w-full text-left text-xs px-3 py-2.5 rounded-xl transition-all duration-200 flex items-center justify-between font-medium ${
                       activeCampaignId === c._id
                         ? "bg-emerald-500 text-white shadow-sm"
-                        : "bg-white text-gray-600 border border-slate-200/80 shadow-card"
+                        : "bg-white text-gray-700 border border-slate-200/60 shadow-card"
                     }`}
                   >
                     <span className="truncate">{c.title || "Campaign"}</span>
@@ -430,7 +429,6 @@ export default function ActivityPage() {
           )}
         </div>
       )}
-      </div>
     </div>
   );
 }

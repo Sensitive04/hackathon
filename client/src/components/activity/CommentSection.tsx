@@ -61,10 +61,10 @@ export default function CommentSection({ postId, currentUserId }: Props) {
   const hiddenCount = comments.length - COLLAPSE_COUNT;
 
   return (
-    <div className="mt-3 pt-3 border-t border-gray-100/80">
+    <div className="mt-3 pt-3 border-t border-slate-100">
       <div className="flex items-center gap-1.5 mb-2.5">
         <MessageCircle className="w-3.5 h-3.5 text-gray-400" />
-        <span className="text-xs text-gray-400 font-semibold">
+          <span className="text-xs text-gray-500 font-semibold">
           {comments.length > 0 ? `${comments.length} comment${comments.length !== 1 ? "s" : ""}` : "Comments"}
         </span>
       </div>
@@ -72,7 +72,7 @@ export default function CommentSection({ postId, currentUserId }: Props) {
       {!loading && comments.length > COLLAPSE_COUNT && !showAll && (
         <button
           onClick={() => setShowAll(true)}
-          className="text-xs text-eco-primary hover:text-eco-secondary mb-2.5 font-semibold transition-colors duration-200"
+          className="text-xs text-eco-primary hover:text-emerald-600 mb-2.5 font-semibold transition-colors duration-200"
         >
           View all {comments.length} comments
         </button>
@@ -108,7 +108,7 @@ export default function CommentSection({ postId, currentUserId }: Props) {
       <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
         <input
           type="text"
-          className="flex-1 text-xs input-field !py-2"
+          className="flex-1 text-xs !py-2 px-4 rounded-xl border border-slate-200/60 bg-gray-50 text-gray-900 placeholder:text-gray-400 transition-all duration-200 focus:border-eco-primary focus:ring-2 focus:ring-eco-primary/20 focus:outline-none"
           placeholder="Write a comment..."
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}

@@ -42,7 +42,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-50 shadow-nav">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link
             to="/"
@@ -108,6 +108,9 @@ export default function Navbar() {
                 </button>
                 <Link to="/satellite" className={navLink("/satellite")}>
                   Green Map
+                </Link>
+                <Link to="/activity" className={navLink("/activity")}>
+                  Activity
                 </Link>
                 <Link to="/marketplace" className={navLink("/marketplace")}>
                   Marketplace
@@ -188,6 +191,9 @@ export default function Navbar() {
               </button>
               <Link to="/satellite" className={mobileNavLink("/satellite")} onClick={() => setMobileOpen(false)}>
                 Green Map
+              </Link>
+              <Link to="/activity" className={mobileNavLink("/activity")} onClick={() => setMobileOpen(false)}>
+                Activity
               </Link>
               <Link to="/marketplace" className={mobileNavLink("/marketplace")} onClick={() => setMobileOpen(false)}>
                 Marketplace

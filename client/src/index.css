@@ -82,7 +82,7 @@
   }
 
   .page-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8;
   }
 
   .gradient-text {
@@ -115,5 +115,9 @@
 
   .page-header-desc {
     @apply text-gray-500 mt-1 text-sm leading-relaxed;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-md bg-white/80 border-white/40 shadow-float;
   }
 }

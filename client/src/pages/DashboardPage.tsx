@@ -104,8 +104,8 @@ function GuestLanding() {
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-400/15 rounded-full blur-3xl animate-pulse-gentle" style={{ animationDelay: "1s" }} />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-400/10 rounded-full blur-3xl" />
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36 relative z-10">
-          <div className="max-w-3xl animate-fade-in-up">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36 relative z-10">
+          <div className="max-w-4xl animate-fade-in-up">
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/10 rounded-full px-4 py-1.5 mb-6">
               <Leaf className="w-4 h-4 text-green-300" />
               <span className="text-green-200 font-medium text-xs uppercase tracking-wider">
@@ -119,7 +119,7 @@ function GuestLanding() {
               </span>{" "}
               with AI-Powered Insights
             </h1>
-            <p className="text-lg text-green-100/70 mb-10 max-w-2xl leading-relaxed">
+            <p className="text-lg text-green-100/70 mb-10 max-w-3xl leading-relaxed">
               Leverage satellite imagery, artificial intelligence, and smart
               technology to reduce carbon emissions, optimize energy usage, and
               build sustainable communities.
@@ -146,7 +146,7 @@ function GuestLanding() {
 
       {/* Stats bar */}
       <section className="relative -mt-8 z-10">
-        <div className="max-w-4xl mx-auto px-4">
+        <div className="max-w-5xl mx-auto px-4">
           <div className="bg-white rounded-2xl shadow-float border border-slate-100 p-6 grid grid-cols-3 gap-6 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             {[
               { icon: Globe, value: "Real-time", label: "Satellite Data" },
@@ -169,13 +169,13 @@ function GuestLanding() {
 
       {/* Features */}
       <section id="features" className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span className="inline-block text-xs font-semibold text-eco-primary uppercase tracking-widest mb-3">Features</span>
             <h2 className="section-title mb-4">
               Powerful Features
             </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-gray-500 max-w-3xl mx-auto leading-relaxed">
               Everything you need to measure, reduce, and optimize your
               environmental impact
             </p>
@@ -216,7 +216,7 @@ function GuestLanding() {
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
           <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
         </div>
-        <div className="max-w-4xl mx-auto text-center px-4 relative z-10">
+        <div className="max-w-5xl mx-auto text-center px-4 relative z-10">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4 tracking-tight">
             Ready to Make a Difference?
           </h2>
@@ -234,7 +234,7 @@ function GuestLanding() {
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2.5 mb-4">
             <div className="w-7 h-7 bg-gradient-to-br from-eco-primary to-emerald-400 rounded-lg flex items-center justify-center">
               <Leaf className="w-4 h-4 text-white" />
