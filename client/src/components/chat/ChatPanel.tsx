@@ -1,0 +1,356 @@
+import { useEffect, useRef, useState, useCallback } from "react";
+import { Send, Users, ChevronDown, ChevronUp, Info } from "lucide-react";
+import { api } from "../../services/api";
+
+interface Message {
+  _id: string;
+  senderId: { _id: string; name: string; avatar?: string };
+  content: string;
+  isSystem?: boolean;
+  createdAt: string;
+}
+
+interface Conversation {
+  _id: string;
+  title: string;
+  participants: { _id: string; name: string; avatar?: string; role?: string }[];
+}
+
+interface Props {
+  currentUserId: string;
+  socket: React.MutableRefObject<any>;
+  emit: (event: string, ...args: any[]) => void;
+  onlineUsers: string[];
+  isUserOnline: (id: string) => boolean;
+  onClose: () => void;
+  unread: Record<string, number>;
+  clearUnread: (id: string) => void;
+  initialConversationId?: string;
+  isEnded?: boolean;
+}
+
+export default function ChatPanel({
+  currentUserId,
+  socket,
+  emit,
+  onlineUsers,
+  isUserOnline,
+  onClose,
+  unread,
+  clearUnread,
+  initialConversationId,
+  isEnded = false,
+}: Props) {
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(initialConversationId || null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [typingUsers, setTypingUsers] = useState<Record<string, Set<string>>>({});
+  const [showMembers, setShowMembers] = useState(false);
+  const messagesEnd = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const loadConversations = useCallback(async () => {
+    try {
+      const data = await api.getCampaignChats();
+      setConversations(data);
+      if (!activeId && data.length > 0) {
+        setActiveId(data[0]._id);
+      }
+    } catch {
+      // silent
+    }
+  }, []);
+
+  useEffect(() => {
+    loadConversations();
+  }, [loadConversations]);
+
+  useEffect(() => {
+    if (initialConversationId) {
+      setActiveId(initialConversationId);
+    }
+  }, [initialConversationId]);
+
+  const loadMessages = useCallback(
+    async (convId: string) => {
+      setLoading(true);
+      try {
+        const data = await api.getChatMessages(convId);
+        setMessages(data);
+        clearUnread(convId);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    },
+    [clearUnread]
+  );
+
+  useEffect(() => {
+    if (activeId) {
+      loadMessages(activeId);
+      if (socket.current) {
+        socket.current.emit("join", activeId);
+      }
+    }
+    return () => {
+      if (activeId && socket.current) {
+        socket.current.emit("leave", activeId);
+      }
+    };
+  }, [activeId, socket]);
+
+  // FIX: Skip messages from self to prevent duplicates (REST response + socket both arrive)
+  useEffect(() => {
+    if (!socket.current) return;
+    const handler = (data: { conversationId: string; message: Message }) => {
+      if (data.conversationId === activeId && data.message.senderId._id !== currentUserId) {
+        setMessages((prev) => [...prev, data.message]);
+      }
+    };
+    socket.current.on("chat:message", handler);
+    return () => {
+      socket.current?.off("chat:message", handler);
+    };
+  }, [activeId, socket, currentUserId]);
+
+  useEffect(() => {
+    if (!socket.current) return;
+
+    const onStart = (data: { conversationId: string; userId: string }) => {
+      if (data.userId === currentUserId) return;
+      setTypingUsers((prev) => {
+        const copy = { ...prev };
+        if (!copy[data.conversationId]) copy[data.conversationId] = new Set();
+        copy[data.conversationId] = new Set(copy[data.conversationId]);
+        copy[data.conversationId].add(data.userId);
+        return copy;
+      });
+    };
+
+    const onStop = (data: { conversationId: string; userId: string }) => {
+      setTypingUsers((prev) => {
+        const copy = { ...prev };
+        if (copy[data.conversationId]) {
+          copy[data.conversationId] = new Set(copy[data.conversationId]);
+          copy[data.conversationId].delete(data.userId);
+        }
+        return copy;
+      });
+    };
+
+    socket.current.on("typing:start", onStart);
+    socket.current.on("typing:stop", onStop);
+    return () => {
+      socket.current?.off("typing:start", onStart);
+      socket.current?.off("typing:stop", onStop);
+    };
+  }, [socket, currentUserId]);
+
+  useEffect(() => {
+    messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+    if (activeId && e.target.value.trim()) {
+      emit("typing:start", { conversationId: activeId });
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => {
+        emit("typing:stop", { conversationId: activeId });
+      }, 2000);
+    }
+  };
+
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || !activeId || isEnded) return;
+    const text = input.trim();
+    setInput("");
+
+    emit("typing:stop", { conversationId: activeId });
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+    try {
+      const msg = await api.sendChatMessage(activeId, text);
+      setMessages((prev) => [...prev, msg]);
+    } catch {
+      setInput(text);
+    }
+  };
+
+  const activeConv = conversations.find((c) => c._id === activeId);
+  const totalUnread = Object.values(unread).reduce((a, b) => a + b, 0);
+  const activeTyping = activeId && typingUsers[activeId] && typingUsers[activeId].size > 0;
+
+  return (
+    <div
+      className="bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col"
+      style={{ height: "480px" }}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b bg-white/80">
+        <div className="min-w-0 flex-1">
+          <h3 className="font-bold text-sm text-gray-900 truncate">
+            {activeConv?.title || "Campaign Chat"}
+          </h3>
+          <p className="text-xs text-gray-400">
+            {activeConv?.participants.length || 0} members
+            {activeConv && (() => {
+              const onlineCount = activeConv.participants.filter((p) =>
+                isUserOnline(p._id)
+              ).length;
+              return onlineCount > 0 ? (
+                <span className="ml-2 text-green-500">{onlineCount} online</span>
+              ) : null;
+            })()}
+            {isEnded && (
+              <span className="ml-2 text-red-500 font-medium">Ended</span>
+            )}
+            {totalUnread > 0 && (
+              <span className="ml-2 text-red-500 font-medium">{totalUnread} unread</span>
+            )}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowMembers(!showMembers)}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            {showMembers ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <Users className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Member list */}
+      {showMembers && activeConv && (
+        <div className="border-b bg-gray-50 px-4 py-2 max-h-40 overflow-y-auto">
+          <p className="text-[10px] font-semibold text-gray-400 uppercase mb-1">
+            Members ({activeConv.participants.length})
+          </p>
+          {activeConv.participants.map((p) => (
+            <div key={p._id} className="flex items-center gap-2 py-1">
+              <span className="relative flex-shrink-0">
+                <span className="w-6 h-6 bg-eco-primary rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+                  {p.name?.charAt(0)?.toUpperCase() || "?"}
+                </span>
+                {isUserOnline(p._id) && (
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
+                )}
+              </span>
+              <span className="text-xs text-gray-700">
+                {p.name}
+                {p._id === currentUserId && (
+                  <span className="text-gray-400 ml-1">(you)</span>
+                )}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2">
+        {loading && (
+          <p className="text-xs text-gray-400 text-center py-4">Loading messages...</p>
+        )}
+        {!loading && messages.length === 0 && (
+          <p className="text-xs text-gray-400 text-center py-4">
+            No messages yet. Say hello!
+          </p>
+        )}
+        {messages.map((msg) => {
+          // System message rendering
+          if (msg.isSystem) {
+            return (
+              <div key={msg._id} className="flex justify-center my-2">
+                <div className="flex items-center gap-1.5 text-xs text-gray-400 bg-gray-50 px-3 py-1.5 rounded-full">
+                  <Info className="w-3 h-3" />
+                  <span className="italic">{msg.content}</span>
+                </div>
+              </div>
+            );
+          }
+
+          const isMine = msg.senderId._id === currentUserId;
+          return (
+            <div
+              key={msg._id}
+              className={`flex ${isMine ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={`max-w-[80%] px-3 py-2 rounded-2xl text-sm ${
+                  isMine
+                    ? "bg-emerald-500 text-white rounded-br-md"
+                    : "bg-gray-100 text-gray-800 rounded-bl-md"
+                }`}
+              >
+                {!isMine && (
+                  <p className="text-[10px] font-medium opacity-70 mb-0.5">
+                    {msg.senderId.name}
+                  </p>
+                )}
+                <p>{msg.content}</p>
+                <p
+                  className={`text-[10px] mt-0.5 ${
+                    isMine ? "text-emerald-100" : "text-gray-400"
+                  }`}
+                >
+                  {new Date(msg.createdAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+        <div ref={messagesEnd} />
+      </div>
+
+      {/* Typing indicator */}
+      {activeTyping && !isEnded && (
+        <div className="px-3 py-1 text-xs text-gray-400 italic">
+          {typingUsers[activeId!].size === 1
+            ? "Someone is typing"
+            : `${typingUsers[activeId!].size} people are typing`}
+          <span className="animate-pulse">...</span>
+        </div>
+      )}
+
+      {/* Ended banner */}
+      {isEnded && (
+        <div className="px-3 py-2 text-xs text-center text-gray-400 bg-gray-50 border-t italic">
+          This campaign has ended. Messaging is disabled.
+        </div>
+      )}
+
+      {/* Input */}
+      {activeId && !isEnded && (
+        <form onSubmit={handleSend} className="flex gap-2 px-3 py-2 border-t bg-white/80">
+          <input
+            type="text"
+            className="flex-1 text-sm input-field !py-2"
+            placeholder="Type a message..."
+            value={input}
+            onChange={handleInputChange}
+          />
+          <button
+            type="submit"
+            disabled={!input.trim()}
+            className="btn-primary !rounded-full !p-2"
+          >
+            <Send className="w-4 h-4" />
+          </button>
+        </form>
+      )}
+    </div>
+  );
+}

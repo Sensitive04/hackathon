@@ -5,6 +5,7 @@ export interface MessageDocument extends Document {
   senderId: mongoose.Types.ObjectId;
   content: string;
   read: boolean;
+  isSystem: boolean;
 }
 
 const messageSchema = new Schema<MessageDocument>(
@@ -17,6 +18,7 @@ const messageSchema = new Schema<MessageDocument>(
     senderId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     content: { type: String, required: true, maxlength: 5000 },
     read: { type: Boolean, default: false },
+    isSystem: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

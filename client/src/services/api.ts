@@ -97,6 +97,89 @@ export const api = {
       headers: getHeaders(),
     }).then(handleResponse),
 
+  // Posts / Activity Feed
+  getFeed: (page = 1, params?: Record<string, string>) => {
+    const q = new URLSearchParams({ page: String(page) });
+    if (params) Object.entries(params).forEach(([k, v]) => q.set(k, v));
+    return fetch(`${API_URL}/posts?${q}`, {
+      headers: getHeaders(),
+    }).then(handleResponse);
+  },
+
+  createPost: (data: { content: string; images?: string[]; hashtags?: string[]; campaignStatus?: string; volunteerNeeded?: number }) =>
+    fetch(`${API_URL}/posts`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    }).then(handleResponse),
+
+  deletePost: (id: string) =>
+    fetch(`${API_URL}/posts/${id}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  updatePost: (id: string, data: { content?: string; images?: string[]; hashtags?: string[]; campaignStatus?: string }) =>
+    fetch(`${API_URL}/posts/${id}`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    }).then(handleResponse),
+
+  likePost: (id: string) =>
+    fetch(`${API_URL}/posts/${id}/like`, {
+      method: "POST",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  joinCampaign: (id: string) =>
+    fetch(`${API_URL}/posts/${id}/join`, {
+      method: "POST",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  startCampaign: (id: string) =>
+    fetch(`${API_URL}/posts/${id}/start`, {
+      method: "POST",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  endCampaign: (id: string) =>
+    fetch(`${API_URL}/posts/${id}/end`, {
+      method: "POST",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  getCampaignChats: () =>
+    fetch(`${API_URL}/posts/campaign-chats`, {
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  getChatMessages: (conversationId: string) =>
+    fetch(`${API_URL}/posts/chat/${conversationId}/messages`, {
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  sendChatMessage: (conversationId: string, content: string) =>
+    fetch(`${API_URL}/posts/chat/${conversationId}/messages`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ content }),
+    }).then(handleResponse),
+
+  // Comments
+  getComments: (postId: string) =>
+    fetch(`${API_URL}/posts/${postId}/comments`, {
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  createComment: (postId: string, text: string) =>
+    fetch(`${API_URL}/posts/${postId}/comments`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ text }),
+    }).then(handleResponse),
+
   // Messages
   getConversations: () =>
     fetch(`${API_URL}/messages/conversations`, {
