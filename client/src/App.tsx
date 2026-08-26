@@ -9,6 +9,10 @@ import SatellitePage from "./pages/SatellitePage";
 import ActivityPage from "./pages/ActivityPage";
 import RecycleSuggestPage from "./pages/RecycleSuggestPage";
 import MarketplacePage from "./pages/MarketplacePage";
+import AdminPage from "./pages/AdminPage";
+import MessagesPage from "./pages/MessagesPage";
+import RecycleQueuePage from "./pages/RecycleQueuePage";
+import AdminRoute from "./components/common/AdminRoute";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -61,6 +65,32 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <MarketplacePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <AdminPage />
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <ProtectedRoute>
+                <MessagesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recycle-queue"
+            element={
+              <ProtectedRoute>
+                <RecycleQueuePage />
               </ProtectedRoute>
             }
           />

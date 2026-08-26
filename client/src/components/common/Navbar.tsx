@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { Leaf, LogOut, Menu, X, LayoutDashboard } from "lucide-react";
+import { Leaf, LogOut, Menu, X, LayoutDashboard, MessageCircle, Shield, Recycle } from "lucide-react";
 import { useState } from "react";
 
 export default function Navbar() {
@@ -48,12 +48,33 @@ export default function Navbar() {
                 <Link to="/marketplace" className={navLink}>
                   Marketplace
                 </Link>
+                <Link to="/messages" className={navLink}>
+                  <MessageCircle className="w-4 h-4 inline mr-1" />
+                  Messages
+                </Link>
+                {(user?.role === "recycler" || user?.role === "admin") && (
+                  <Link to="/recycle-queue" className={navLink}>
+                    <Recycle className="w-4 h-4 inline mr-1" />
+                    Recycle Queue
+                  </Link>
+                )}
+                {user?.role === "admin" && (
+                  <Link to="/admin" className={navLink}>
+                    <Shield className="w-4 h-4 inline mr-1" />
+                    Admin
+                  </Link>
+                )}
                 <div className="ml-4 flex items-center gap-3">
                   <span className="text-sm text-gray-500">
                     {user?.name}
                     {user?.role === "admin" && (
-                      <span className="ml-1 text-xs bg-eco-light text-eco-primary px-2 py-0.5 rounded-full">
+                      <span className="ml-1 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
                         Admin
+                      </span>
+                    )}
+                    {user?.role === "recycler" && (
+                      <span className="ml-1 text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">
+                        Recycler
                       </span>
                     )}
                   </span>
@@ -102,6 +123,19 @@ export default function Navbar() {
               <Link to="/marketplace" className={navLink} onClick={() => setMobileOpen(false)}>
                 Marketplace
               </Link>
+              <Link to="/messages" className={navLink} onClick={() => setMobileOpen(false)}>
+                Messages
+              </Link>
+              {(user?.role === "recycler" || user?.role === "admin") && (
+                <Link to="/recycle-queue" className={navLink} onClick={() => setMobileOpen(false)}>
+                  Recycle Queue
+                </Link>
+              )}
+              {user?.role === "admin" && (
+                <Link to="/admin" className={navLink} onClick={() => setMobileOpen(false)}>
+                  Admin
+                </Link>
+              )}
               <hr className="my-2" />
               <button onClick={handleLogout} className={navLink + " text-red-500"}>
                 Logout

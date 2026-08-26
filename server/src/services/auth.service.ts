@@ -5,8 +5,8 @@ function getJWTSecret() {
   return process.env.JWT_SECRET || "fallback_secret";
 }
 
-function getJWTExpiresIn() {
-  return process.env.JWT_EXPIRES_IN || "7d";
+function getJWTExpiresIn(): jwt.SignOptions["expiresIn"] {
+  return (process.env.JWT_EXPIRES_IN || "7d") as jwt.SignOptions["expiresIn"];
 }
 
 function generateToken(user: UserDocument): string {

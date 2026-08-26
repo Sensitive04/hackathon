@@ -2,6 +2,7 @@ import { Response } from "express";
 import { IAuthRequest } from "../types/index.js";
 import * as aiService from "../services/ai.service.js";
 import Marketplace from "../models/Marketplace.js";
+import RecyclePickup from "../models/RecyclePickup.js";
 
 export const analyzeItem = async (
   req: IAuthRequest,
@@ -18,7 +19,8 @@ export const analyzeItem = async (
     }
 
     const analysis = await aiService.analyzeRecycling(
-      description || "User uploaded image of item"
+      description || "User uploaded image of item",
+      imageBase64
     );
     res.json(analysis);
   } catch (error) {
@@ -49,6 +51,13 @@ export const listItem = async (
       sellerId: req.user!.id,
       expiresAt,
     });
+
+    if (listingType === "recycle") {
+      await RecyclePickup.create({
+        listingId: item._id,
+        requesterId: req.user!.id,
+      });
+    }
 
     res.status(201).json(item);
   } catch (error) {

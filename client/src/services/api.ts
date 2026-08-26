@@ -17,19 +17,6 @@ async function handleResponse(res: Response) {
 }
 
 export const api = {
-  // Satellite
-  analyzeSatellite: (region: string, lat: number, lng: number) =>
-    fetch(`${API_URL}/satellite/analyze`, {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify({ region, coordinates: { lat, lng } }),
-    }).then(handleResponse),
-
-  getSatelliteHistory: () =>
-    fetch(`${API_URL}/satellite/history`, {
-      headers: getHeaders(),
-    }).then(handleResponse),
-
   // Marketplace
   analyzeItem: (description: string, imageBase64?: string) =>
     fetch(`${API_URL}/marketplace/analyze`, {
@@ -52,8 +39,8 @@ export const api = {
     }).then(handleResponse);
   },
 
-  getItem: (id: string) =>
-    fetch(`${API_URL}/marketplace/${id}`, {
+  getMyListings: () =>
+    fetch(`${API_URL}/marketplace/my-listings`, {
       headers: getHeaders(),
     }).then(handleResponse),
 
@@ -63,8 +50,134 @@ export const api = {
       headers: getHeaders(),
     }).then(handleResponse),
 
-  getMyListings: () =>
-    fetch(`${API_URL}/marketplace/my-listings`, {
+  // Admin
+  getAdminUsers: (page = 1) =>
+    fetch(`${API_URL}/admin/users?page=${page}`, {
       headers: getHeaders(),
     }).then(handleResponse),
+
+  deleteAdminUser: (id: string) =>
+    fetch(`${API_URL}/admin/users/${id}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  updateAdminUserRole: (id: string, role: string) =>
+    fetch(`${API_URL}/admin/users/${id}/role`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify({ role }),
+    }).then(handleResponse),
+
+  createAdminAccount: (name: string, email: string, password: string) =>
+    fetch(`${API_URL}/admin/create-admin`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ name, email, password }),
+    }).then(handleResponse),
+
+  createRecyclerAccount: (name: string, email: string, password: string) =>
+    fetch(`${API_URL}/admin/create-recycler`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ name, email, password }),
+    }).then(handleResponse),
+
+  getAdminListings: (page = 1) =>
+    fetch(`${API_URL}/admin/listings?page=${page}`, {
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  deleteAdminListing: (id: string) =>
+    fetch(`${API_URL}/admin/listings/${id}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  getAdminStats: () =>
+    fetch(`${API_URL}/admin/stats`, {
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  adminGetAllPickups: (page = 1, status?: string) => {
+    const params = new URLSearchParams({ page: String(page) });
+    if (status) params.set("status", status);
+    return fetch(`${API_URL}/admin/recycle-pickups?${params}`, {
+      headers: getHeaders(),
+    }).then(handleResponse);
+  },
+
+  adminReassignPickup: (id: string, recyclerId: string | null) =>
+    fetch(`${API_URL}/admin/recycle-pickups/${id}/reassign`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify({ recyclerId }),
+    }).then(handleResponse),
+
+  adminDeletePickup: (id: string) =>
+    fetch(`${API_URL}/admin/recycle-pickups/${id}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  // Messages
+  getConversations: () =>
+    fetch(`${API_URL}/messages/conversations`, {
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  createConversation: (participantId: string, listingId?: string) =>
+    fetch(`${API_URL}/messages/conversations`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ participantId, listingId }),
+    }).then(handleResponse),
+
+  getMessages: (conversationId: string) =>
+    fetch(`${API_URL}/messages/${conversationId}`, {
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  sendMessage: (conversationId: string, content: string) =>
+    fetch(`${API_URL}/messages/${conversationId}`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ content }),
+    }).then(handleResponse),
+
+  markConversationRead: (conversationId: string) =>
+    fetch(`${API_URL}/messages/${conversationId}/read`, {
+      method: "PUT",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  // Recycle Pickups
+  getPendingPickups: () =>
+    fetch(`${API_URL}/recycle/pending`, {
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  claimPickup: (listingId: string) =>
+    fetch(`${API_URL}/recycle/${listingId}/claim`, {
+      method: "POST",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  updatePickupStatus: (
+    id: string,
+    status: string,
+    notes?: string,
+    scheduledDate?: string
+  ) =>
+    fetch(`${API_URL}/recycle/${id}/status`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify({ status, notes, scheduledDate }),
+    }).then(handleResponse),
+
+  getMyPickups: () =>
+    fetch(`${API_URL}/recycle/my-pickups`, {
+      headers: getHeaders(),
+    }).then(handleResponse),
+
 };

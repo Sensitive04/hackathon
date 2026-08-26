@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Satellite, ClipboardList, Recycle } from "lucide-react";
+import { Satellite, ClipboardList, Recycle, MessageCircle, Shield } from "lucide-react";
 
-const quickActions = [
+const baseActions = [
   {
     icon: Satellite,
     title: "Green Map",
@@ -31,10 +31,39 @@ const quickActions = [
     link: "/marketplace",
     color: "bg-purple-500",
   },
+  {
+    icon: MessageCircle,
+    title: "Messages",
+    desc: "Chat with sellers and buyers",
+    link: "/messages",
+    color: "bg-blue-600",
+  },
 ];
 
 export default function DashboardPage() {
   const { user } = useAuth();
+
+  const actions = [...baseActions];
+
+  if (user?.role === "recycler" || user?.role === "admin") {
+    actions.push({
+      icon: Recycle,
+      title: "Recycle Queue",
+      desc: "View and claim items for recycling pickup",
+      link: "/recycle-queue",
+      color: "bg-teal-600",
+    });
+  }
+
+  if (user?.role === "admin") {
+    actions.push({
+      icon: Shield,
+      title: "Admin Dashboard",
+      desc: "Manage users, listings, and platform settings",
+      link: "/admin",
+      color: "bg-red-600",
+    });
+  }
 
   return (
     <div className="page-container">
@@ -49,7 +78,7 @@ export default function DashboardPage() {
 
       <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {quickActions.map((action) => (
+        {actions.map((action) => (
           <Link key={action.title} to={action.link} className="card group">
             <div className="flex items-start gap-4">
               <div

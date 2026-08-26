@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Leaf, Eye, EyeOff, Users, Recycle } from "lucide-react";
+import { Leaf, Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("user");
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
@@ -22,7 +21,7 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      await register(name, email, password, role);
+      await register(name, email, password);
       navigate("/dashboard");
     } catch (err: any) {
       toast.error(err.message || "Registration failed");
@@ -47,31 +46,6 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="card space-y-4">
-          <div>
-            <label className="label">I want to join as</label>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { value: "user", label: "User", icon: Leaf },
-                { value: "admin", label: "Admin", icon: Users },
-                { value: "recycler", label: "Recycler", icon: Recycle },
-              ].map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setRole(opt.value)}
-                  className={`p-3 rounded-xl border-2 text-center transition-all ${
-                    role === opt.value
-                      ? "border-eco-primary bg-eco-light text-eco-primary"
-                      : "border-gray-200 text-gray-500 hover:border-gray-300"
-                  }`}
-                >
-                  <opt.icon className="w-5 h-5 mx-auto mb-1" />
-                  <span className="text-xs font-medium">{opt.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div>
             <label className="label">Full Name</label>
             <input

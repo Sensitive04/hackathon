@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { api } from "../services/api";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import ErrorDisplay from "../components/common/ErrorDisplay";
@@ -12,15 +14,21 @@ import {
   CheckCircle,
   XCircle,
   Package,
+  MessageCircle,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { MarketplaceItem, RecyclingAnalysis } from "../types";
 
+type Tab = "browse" | "list" | "recycle" | "my-listings";
+
 export default function MarketplacePage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [items, setItems] = useState<MarketplaceItem[]>([]);
+  const [myItems, setMyItems] = useState<MarketplaceItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [tab, setTab] = useState<"browse" | "list" | "recycle">("browse");
+  const [tab, setTab] = useState<Tab>("browse");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
 
@@ -56,13 +64,35 @@ export default function MarketplacePage() {
     }
   };
 
+  const fetchMyListings = async () => {
+    setLoading(true);
+    try {
+      const data = await api.getMyListings();
+      setMyItems(data);
+    } catch (err: any) {
+      toast.error("Failed to load your listings");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchItems();
-  }, [categoryFilter]);
+    if (tab === "browse") fetchItems();
+    if (tab === "my-listings") fetchMyListings();
+  }, [categoryFilter, tab]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     fetchItems();
+  };
+
+  const handleMessageSeller = async (sellerId: string, listingId: string) => {
+    try {
+      const convo = await api.createConversation(sellerId, listingId);
+      navigate(`/messages?conversation=${convo.id}`);
+    } catch {
+      toast.error("Failed to start conversation");
+    }
   };
 
   const handleList = async (e: React.FormEvent) => {
@@ -119,6 +149,13 @@ export default function MarketplacePage() {
     "electronics", "furniture", "clothing", "books", "appliances", "other",
   ];
 
+  const statusColors: Record<string, string> = {
+    available: "bg-green-100 text-green-700",
+    sold: "bg-blue-100 text-blue-700",
+    recycled: "bg-purple-100 text-purple-700",
+    expired: "bg-gray-100 text-gray-500",
+  };
+
   return (
     <div className="page-container">
       <div className="mb-8">
@@ -136,16 +173,17 @@ export default function MarketplacePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-8 border-b border-gray-200">
+      <div className="flex gap-2 mb-8 border-b border-gray-200 overflow-x-auto">
         {[
           { key: "browse", label: "Marketplace", icon: ShoppingCart },
+          { key: "my-listings", label: "My Listings", icon: Package },
           { key: "list", label: "List Item", icon: Plus },
           { key: "recycle", label: "Recycle Guide", icon: Recycle },
         ].map((t) => (
           <button
             key={t.key}
-            onClick={() => setTab(t.key as any)}
-            className={`flex items-center gap-2 px-4 py-3 font-medium text-sm border-b-2 transition-all ${
+            onClick={() => setTab(t.key as Tab)}
+            className={`flex items-center gap-2 px-4 py-3 font-medium text-sm border-b-2 transition-all whitespace-nowrap ${
               tab === t.key
                 ? "border-eco-primary text-eco-primary"
                 : "border-transparent text-gray-500 hover:text-gray-700"
@@ -232,14 +270,97 @@ export default function MarketplacePage() {
                   <span className="text-xs text-gray-400">
                     by {item.sellerId?.name || "Unknown"}
                   </span>
-                  {item.listingType !== "recycle" && item.status === "available" && (
-                    <button
-                      onClick={() => handlePurchase(item._id)}
-                      className="btn-primary text-xs py-1.5 px-3"
+                  <div className="flex gap-2">
+                    {item.sellerId && user && item.sellerId._id !== user.id && (
+                      <button
+                        onClick={() =>
+                          handleMessageSeller(
+                            item.sellerId._id,
+                            item._id
+                          )
+                        }
+                        className="text-gray-400 hover:text-eco-primary transition-colors"
+                        title="Message Seller"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                      </button>
+                    )}
+                    {item.listingType !== "recycle" && item.status === "available" && (
+                      <button
+                        onClick={() => handlePurchase(item._id)}
+                        className="btn-primary text-xs py-1.5 px-3"
+                      >
+                        {item.listingType === "free" ? "Claim" : "Buy"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* My Listings */}
+      {tab === "my-listings" && (
+        <div>
+          {loading && <LoadingSpinner text="Loading your listings..." />}
+
+          {!loading && myItems.length === 0 && (
+            <div className="card text-center py-12">
+              <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500">You haven't listed any items yet.</p>
+              <button
+                onClick={() => setTab("list")}
+                className="btn-primary mt-4 text-sm"
+              >
+                List Your First Item
+              </button>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {myItems.map((item) => (
+              <div key={item._id} className="card">
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="font-bold text-gray-900">{item.title}</h3>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                        statusColors[item.status] || "bg-gray-100 text-gray-500"
+                      }`}
                     >
-                      {item.listingType === "free" ? "Claim" : "Buy"}
-                    </button>
-                  )}
+                      {item.status}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500 mb-3 line-clamp-2">
+                  {item.description}
+                </p>
+                <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
+                  <span className="capitalize">{item.category}</span>
+                  <span
+                    className={`px-2 py-0.5 rounded-full font-medium ${
+                      item.listingType === "free"
+                        ? "bg-green-100 text-green-700"
+                        : item.listingType === "recycle"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-purple-100 text-purple-700"
+                    }`}
+                  >
+                    {item.listingType === "sale" ? `$${item.price}` : item.listingType}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-gray-400 border-t pt-3">
+                  <span>Listed {new Date(item.createdAt).toLocaleDateString()}</span>
+                  <button
+                    onClick={() => handleMessageSeller(user!.id, item._id)}
+                    className="flex items-center gap-1 text-eco-primary hover:text-eco-primary/80 transition-colors"
+                    title="View conversations about this listing"
+                  >
+                    <MessageCircle className="w-3 h-3" />
+                    Messages
+                  </button>
                 </div>
               </div>
             ))}

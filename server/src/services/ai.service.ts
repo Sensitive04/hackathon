@@ -1,4 +1,4 @@
-import { getChatCompletion } from "../config/ai.js";
+import { getChatCompletion, getVisionCompletion } from "../config/ai.js";
 
 const SYSTEM_PROMPT = [
   "You are GreenVerse AI, an expert environmental sustainability assistant.",
@@ -40,8 +40,8 @@ export async function analyzeSatelliteData(region: string, coordinates: { lat: n
   return extractJSON(response);
 }
 
-export async function analyzeRecycling(imageDescription: string) {
-  const prompt = [
+export async function analyzeRecycling(imageDescription: string, imageBase64?: string) {
+  const recyclingPrompt = [
     `A user has submitted an item for recycling analysis. Description: "${imageDescription}"`,
     "Provide a comprehensive recycling guidance including:",
     "- Item identification and material composition",
@@ -49,9 +49,30 @@ export async function analyzeRecycling(imageDescription: string) {
     "- Step-by-step recycling instructions",
     "- Environmental impact of proper recycling",
     "- If still usable, suggest reuse ideas or marketplace listing",
-    "Return ONLY valid JSON with keys: itemName, materials (array), recyclable (boolean), disposalMethod, steps (array), environmentalImpact, reusable (boolean), reuseIdeas (array), suggestedPrice (number, 0 if not sellable)",
+    "- Additionally, suggest creative DIY/homemade items that can be made from this item or its materials",
+    "Return ONLY valid JSON with keys: itemName, materials (array), recyclable (boolean), disposalMethod, steps (array), environmentalImpact, reusable (boolean), reuseIdeas (array), suggestedPrice (number, 0 if not sellable), homemadeIdeas (array of objects with keys: title, description, materials (array of strings needed), steps (array of strings))",
   ].join(" ");
 
-  const response = await generateContent(prompt);
+  let response: string;
+
+  if (imageBase64) {
+    const dataUrl = imageBase64.startsWith("data:")
+      ? imageBase64
+      : `data:image/jpeg;base64,${imageBase64}`;
+
+    response = await getVisionCompletion([
+      { role: "system", content: SYSTEM_PROMPT },
+      {
+        role: "user",
+        content: [
+          { type: "text", text: recyclingPrompt },
+          { type: "image_url", image_url: { url: dataUrl } },
+        ],
+      },
+    ]);
+  } else {
+    response = await generateContent(recyclingPrompt);
+  }
+
   return extractJSON(response);
 }
