@@ -195,3 +195,27 @@ export const markRead = async (
     res.status(500).json({ error: "Failed to mark as read" });
   }
 };
+
+export const deleteConversation = async (
+  req: IAuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { conversationId } = req.params;
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      res.status(404).json({ error: "Conversation not found" });
+      return;
+    }
+    if (!conversation.participants.includes(req.user!.id as any)) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    await Message.deleteMany({ conversationId });
+    await Conversation.findByIdAndDelete(conversationId);
+    res.json({ message: "Conversation deleted" });
+  } catch {
+    res.status(500).json({ error: "Failed to delete conversation" });
+  }
+};

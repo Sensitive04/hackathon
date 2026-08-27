@@ -45,7 +45,7 @@ export default function MarketplacePage() {
     category: "electronics",
     condition: "good",
     price: "",
-    listingType: "sale" as "sale" | "free" | "recycle",
+    listingType: "sale" as "sale" | "free",
   });
   const [listImages, setListImages] = useState<string[]>([]);
   const [listingLoading, setListingLoading] = useState(false);
@@ -126,7 +126,7 @@ export default function MarketplacePage() {
       await api.listItem({
         ...listForm,
         images: listImages,
-        price: listForm.listingType === "free" || listForm.listingType === "recycle" ? 0 : parseFloat(listForm.price) || 0,
+        price: listForm.listingType === "free" ? 0 : parseFloat(listForm.price) || 0,
       });
       toast.success("Item listed successfully!");
       setListForm({
@@ -320,7 +320,6 @@ export default function MarketplacePage() {
               <option value="">All Types</option>
               <option value="sale">Sale</option>
               <option value="free">Free</option>
-              <option value="recycle">Recycle</option>
             </select>
           </div>
 
@@ -354,15 +353,11 @@ export default function MarketplacePage() {
                     className={`badge ${
                       item.listingType === "free"
                         ? "bg-neu-accent/10 text-green-700 shadow-neu-pressed-sm"
-                        : item.listingType === "recycle"
-                        ? "bg-neu-accent/10 text-emerald-700 shadow-neu-pressed-sm"
                         : "bg-purple-100 text-purple-700 shadow-neu-pressed-sm"
                     }`}
                   >
                     {item.listingType === "free"
                       ? "Free"
-                      : item.listingType === "recycle"
-                      ? "Recycle"
                       : `$${item.price}`}
                   </span>
                 </div>
@@ -410,7 +405,7 @@ export default function MarketplacePage() {
                         onClick={() => handlePurchase(item._id)}
                         className="btn-primary text-xs !py-1.5 !px-3"
                       >
-                        {item.listingType === "free" ? "Claim" : "Recycle"}
+                        {item.listingType === "free" ? "Claim" : "Buy"}
                       </button>
                     )}
                     {item.status === "pending" && (
@@ -483,7 +478,6 @@ export default function MarketplacePage() {
               <option value="">All Types</option>
               <option value="sale">Sale</option>
               <option value="free">Free</option>
-              <option value="recycle">Recycle</option>
             </select>
           </div>
 
@@ -537,12 +531,10 @@ export default function MarketplacePage() {
                       className={`badge ${
                         item.listingType === "free"
                           ? "bg-neu-accent/10 text-green-700 shadow-neu-pressed-sm"
-                          : item.listingType === "recycle"
-                          ? "bg-neu-accent/10 text-emerald-700 shadow-neu-pressed-sm"
                           : "bg-purple-100 text-purple-700 shadow-neu-pressed-sm"
                       }`}
                     >
-                    {item.listingType === "sale" ? `$${item.price}` : item.listingType}
+                    {item.listingType === "sale" ? `$${item.price}` : "Free"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-neu-text-muted border-t border-neu-shadow-dark/15 pt-3">
@@ -569,8 +561,8 @@ export default function MarketplacePage() {
           <div className="space-y-4">
             <div>
               <label className="label">Listing Type</label>
-              <div className="grid grid-cols-3 gap-2">
-                {["sale", "free", "recycle"].map((type) => (
+              <div className="grid grid-cols-2 gap-2">
+                {["sale", "free"].map((type) => (
                   <button
                     key={type}
                     type="button"
@@ -724,7 +716,7 @@ export default function MarketplacePage() {
               AI Recycling Guide
             </h2>
             <p className="text-sm text-neu-text-secondary mb-4 leading-relaxed">
-              Describe an item (or upload a photo) and our AI will guide you on
+              Describe an item and our AI will guide you on
               how to properly recycle, reuse, or dispose of it.
             </p>
             <textarea

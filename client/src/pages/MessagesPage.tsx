@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { api } from "../services/api";
 import { Conversation, ChatMessage } from "../types";
 import toast from "react-hot-toast";
-import { MessageCircle, Send, ArrowLeft, Package, CheckCircle, X } from "lucide-react";
+import { MessageCircle, Send, ArrowLeft, Package, CheckCircle, X, Trash2 } from "lucide-react";
 
 export default function MessagesPage() {
   const { user } = useAuth();
@@ -114,6 +114,23 @@ export default function MessagesPage() {
     activeConvo?.listing?.status === "pending" &&
     activeConvo?.listing?.sellerId?._id === user?.id;
 
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteConversation = async (conversationId: string) => {
+    if (!window.confirm("Delete this conversation? This cannot be undone.")) return;
+    setDeleting(true);
+    try {
+      await api.deleteConversation(conversationId);
+      setConversations((prev) => prev.filter((c) => c.id !== conversationId));
+      if (activeId === conversationId) setActiveId(null);
+      toast.success("Conversation deleted");
+    } catch {
+      toast.error("Failed to delete conversation");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="page-container">
       <div className="page-header">
@@ -145,7 +162,7 @@ export default function MessagesPage() {
                 <button
                   key={c.id}
                   onClick={() => setActiveId(c.id)}
-                  className={`w-full text-left px-4 py-3.5 border-b border-neu-shadow-dark/10 transition-all duration-200 ${
+                  className={`w-full text-left px-4 py-3.5 border-b border-neu-shadow-dark/10 transition-all duration-200 group ${
                     activeId === c.id
                       ? "bg-neu-accent/10 border-l-2 border-l-eco-primary shadow-neu-pressed-sm"
                       : "hover:bg-neu-bg border-l-2 border-l-transparent"
@@ -160,9 +177,21 @@ export default function MessagesPage() {
                         <span className="font-semibold text-sm truncate text-neu-text">
                           {c.otherUser?.name}
                         </span>
-                        {c.listing && (
-                          <Package className="w-3 h-3 text-neu-text-muted flex-shrink-0" />
-                        )}
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          {c.listing && (
+                            <Package className="w-3 h-3 text-neu-text-muted" />
+                          )}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteConversation(c.id);
+                            }}
+                            disabled={deleting}
+                            className="opacity-0 group-hover:opacity-100 p-1 text-neu-text-muted hover:text-neu-red rounded-lg transition-all duration-200 hover:shadow-neu-pressed-sm"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                       {c.listing && (
                         <p className="text-xs text-eco-primary truncate font-medium">
@@ -196,7 +225,7 @@ export default function MessagesPage() {
                   <div className="w-8 h-8 bg-neu-bg rounded-full flex items-center justify-center text-eco-primary text-sm font-bold shadow-neu-raised-sm">
                     {activeConvo.otherUser?.name?.charAt(0) || "?"}
                   </div>
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm text-neu-text tracking-tight">
                       {activeConvo.otherUser?.name}
                     </p>
@@ -206,6 +235,14 @@ export default function MessagesPage() {
                       </p>
                     )}
                   </div>
+                  <button
+                    onClick={() => handleDeleteConversation(activeId!)}
+                    disabled={deleting}
+                    className="p-2 text-neu-text-muted hover:text-neu-red hover:shadow-neu-pressed-sm rounded-xl transition-all duration-200 flex-shrink-0"
+                    title="Delete conversation"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
 
                 {isSellerOfPendingSale && activeConvo?.listing && (

@@ -323,7 +323,6 @@ export default function AdminPage() {
               <option value="">All Types</option>
               <option value="sale">Sale</option>
               <option value="free">Free</option>
-              <option value="recycle">Recycle</option>
             </select>
           </div>
           <div className="card overflow-hidden !p-0">
@@ -351,8 +350,6 @@ export default function AdminPage() {
                         className={`badge ${
                           item.listingType === "free"
                             ? "bg-neu-accent/10 text-green-700 shadow-neu-pressed-sm"
-                            : item.listingType === "recycle"
-                            ? "bg-neu-accent/10 text-emerald-700 shadow-neu-pressed-sm"
                             : "bg-neu-blue-light text-blue-700 shadow-neu-pressed-sm"
                         }`}
                       >

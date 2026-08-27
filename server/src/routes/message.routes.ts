@@ -11,5 +11,6 @@ router.post("/conversations", messageController.createConversation);
 router.get("/:conversationId", messageController.getMessages);
 router.post("/:conversationId", messageController.sendMessage);
 router.put("/:conversationId/read", messageController.markRead);
+router.delete("/:conversationId", messageController.deleteConversation);
 
 export default router;

@@ -1,0 +1,558 @@
+{
+  "nav": {
+    "brand": "Smart & Green City Platform",
+    "greenMap": "Green Map",
+    "activity": "Activity",
+    "recycle": "Recycle",
+    "knowledge": "Knowledge",
+    "marketplace": "Marketplace",
+    "messages": "Messages",
+    "admin": "Admin",
+    "features": "Features",
+    "login": "Log in",
+    "getStarted": "Get Started",
+    "logout": "Logout"
+  },
+  "dashboard": {
+    "hero": {
+      "badge": "Smart Sustainability Platform",
+      "title1": "Building a ",
+      "titleHighlight": "Greener Future",
+      "title2": " with AI-Powered Insights",
+      "desc": "Leverage satellite imagery, artificial intelligence, and smart technology to reduce carbon emissions, optimize energy usage, and build sustainable communities.",
+      "cta": "Get Started Free",
+      "signin": "Sign In"
+    },
+    "stats": {
+      "realtime": "Real-time",
+      "satelliteData": "Satellite Data",
+      "aiPowered": "AI-Powered",
+      "smartAnalysis": "Smart Analysis",
+      "trackReduce": "Track & Reduce",
+      "carbonFootprint": "Carbon Footprint"
+    },
+    "featuresSection": {
+      "badge": "Features",
+      "title": "Powerful Features",
+      "desc": "Everything you need to measure, reduce, and optimize your environmental impact"
+    },
+    "features": {
+      "greenMap": {
+        "title": "Green Map",
+        "desc": "Analyze NDVI and urban heat islands using satellite data. Identify optimal tree planting zones to cool cities."
+      },
+      "activity": {
+        "title": "Activity",
+        "desc": "Track and manage your sustainability activities with smart insights."
+      },
+      "aiRecycle": {
+        "title": "AI Recycle Suggestion",
+        "desc": "Get AI-powered recycling, reuse, and disposal guidance for any item."
+      },
+      "marketplace": {
+        "title": "Garbage Management & Marketplace",
+        "desc": "AI-powered recycling guidance. List reusable items on the marketplace or schedule recycling pickups."
+      }
+    },
+    "signinRequired": "Sign in required",
+    "learnMore": "Learn more",
+    "ctaSection": {
+      "title": "Ready to Make a Difference?",
+      "desc": "Join thousands of users building a more sustainable future.",
+      "btn": "Start Your Journey"
+    },
+    "footer": {
+      "brand": "Smart & Green City",
+      "desc": "Powered by satellite data and artificial intelligence. Building sustainable communities."
+    },
+    "authenticated": {
+      "welcome": "Welcome, {{name}}!",
+      "desc": "Here's your sustainability dashboard",
+      "quickActions": "Quick Actions",
+      "greenMap": {
+        "title": "Green Map",
+        "desc": "Detect urban heat islands and green zones"
+      },
+      "activity": {
+        "title": "Activity",
+        "desc": "Track and manage your sustainability activities"
+      },
+      "aiRecycle": {
+        "title": "AI Recycle Suggestion",
+        "desc": "AI-powered recycling, reuse, and disposal guidance"
+      },
+      "marketplace": {
+        "title": "Marketplace & Garbage Management",
+        "desc": "Browse, list items and get recycling guides"
+      },
+      "messages": {
+        "title": "Messages",
+        "desc": "Chat with other users"
+      },
+      "admin": {
+        "title": "Admin Dashboard",
+        "desc": "Manage users, listings, and platform settings"
+      }
+    }
+  },
+  "login": {
+    "title": "Welcome back",
+    "desc": "Sign in to your Smart & Green City account",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "submitting": "Signing in...",
+    "submit": "Sign In",
+    "noAccount": "Don't have an account?",
+    "signup": "Sign up",
+    "error": "Login failed"
+  },
+  "register": {
+    "title": "Create your account",
+    "desc": "Join the green revolution",
+    "name": "Full Name",
+    "namePlaceholder": "Jane Doe",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Min. 8 characters",
+    "submitting": "Creating account...",
+    "submit": "Create Account",
+    "hasAccount": "Already have an account?",
+    "signin": "Sign in",
+    "passwordError": "Password must be at least 8 characters",
+    "error": "Registration failed"
+  },
+  "satellite": {
+    "title": "Green Map",
+    "desc": "Search any city to view real-time CO₂ levels, air quality, and AI-powered tree planting suggestions.",
+    "searchPlaceholder": "Search for a city (e.g. Delhi, London, Tokyo...)",
+    "searching": "Analyzing...",
+    "search": "Search",
+    "loading": "Fetching air quality data... {{progress}}%",
+    "emptyTitle": "Search a city to get started",
+    "emptyDesc": "Enter any city name above to view its CO₂ concentration levels, air quality index, and personalized tree planting recommendations.",
+    "noData": "No data found for this city. Try another search.",
+    "co2": "CO₂: ",
+    "aqi": "AQI: ",
+    "status": "Status: ",
+    "legend": {
+      "low": "Low CO₂",
+      "moderate": "Moderate",
+      "critical": "Critical"
+    },
+    "liveData": "Live data (WAQI)",
+    "simulatedData": "Simulated data",
+    "airSummary": "Air Summary",
+    "avgCo2": "Avg CO₂",
+    "avgAqi": "Avg AQI",
+    "zonesMonitored": "Zones Monitored",
+    "criticalZones": "Critical Zones Detected",
+    "plantationAlert": "Immediate tree plantation recommended in {{count}} zone(s)!",
+    "plantingTarget": "Planting Target",
+    "plantingDesc": "To offset emissions in critical zones, sponsor or plant approximately:",
+    "trees": "~{{count}} trees",
+    "plantingBasis": "Based on CO₂ excess above 400 ppm threshold across {{count}} critical zone(s).",
+    "zoneBreakdown": "Zone Breakdown",
+    "aqiLabels": {
+      "good": "Good",
+      "moderate": "Moderate",
+      "usg": "Unhealthy for Sensitive Groups",
+      "unhealthy": "Unhealthy"
+    },
+    "co2Labels": {
+      "safe": "Safe",
+      "moderate": "Moderate",
+      "critical": "Critical"
+    }
+  },
+  "activity": {
+    "title": "Activity",
+    "desc": "Share updates and chat with the community.",
+    "tabs": {
+      "all": "All Posts",
+      "campaigns": "Campaigns",
+      "myCampaigns": "My Campaigns",
+      "ended": "Ended"
+    },
+    "searchPlaceholder": "Search hashtags (press Enter)",
+    "empty": {
+      "myCampaigns": "You haven't created any campaigns yet.",
+      "ended": "No ended campaigns.",
+      "default": "No activity yet. Be the first to post!"
+    },
+    "loadMore": "Load more",
+    "loading": "Loading...",
+    "activeChats": "Active Chats",
+    "endedChats": "Ended",
+    "noCampaignChats": "No campaign chats yet. Start or join a campaign to chat!",
+    "campaign": "Campaign",
+    "errors": {
+      "feed": "Failed to load feed",
+      "chats": "Failed to load campaign chats"
+    }
+  },
+  "messages": {
+    "title": "Messages",
+    "conversations": "Conversations",
+    "noConversations": "No conversations yet",
+    "noMessages": "No messages yet",
+    "rePrefix": "Re: ",
+    "selectConversation": "Select a conversation to start chatting",
+    "typePlaceholder": "Type a message...",
+    "deleteConfirm": "Delete this conversation? This cannot be undone.",
+    "deleted": "Conversation deleted",
+    "deleteError": "Failed to delete conversation",
+    "deleteTitle": "Delete conversation",
+    "salePending": "Sale Pending",
+    "wantsToBuy": "wants to buy",
+    "confirming": "Confirming...",
+    "confirmSale": "Confirm Sale",
+    "cancelling": "Cancelling...",
+    "cancel": "Cancel",
+    "saleConfirmed": "Sale confirmed! Item marked as sold.",
+    "saleCancelled": "Sale cancelled. Item is available again.",
+    "errors": {
+      "loadConversations": "Failed to load conversations",
+      "loadMessages": "Failed to load messages",
+      "send": "Failed to send message",
+      "confirmSale": "Failed to confirm sale",
+      "cancelSale": "Failed to cancel sale"
+    }
+  },
+  "marketplace": {
+    "title": "Garbage Management & Marketplace",
+    "desc": "AI-powered recycling guidance, item reuse marketplace, and waste management.",
+    "tabs": {
+      "marketplace": "Marketplace",
+      "myListings": "My Listings",
+      "listItem": "List Item",
+      "recycleGuide": "Recycle Guide"
+    },
+    "searchPlaceholder": "Search items...",
+    "search": "Search",
+    "categories": {
+      "all": "All Categories"
+    },
+    "types": {
+      "all": "All Types",
+      "sale": "Sale",
+      "free": "Free",
+      "recycle": "Recycle"
+    },
+    "loading": "Loading marketplace...",
+    "noItems": "No items found. Be the first to list!",
+    "free": "Free",
+    "recycle": "Recycle",
+    "unknown": "Unknown",
+    "messageSeller": "Message Seller",
+    "contactSeller": "Contact Seller",
+    "claim": "Claim",
+    "pending": "Pending",
+    "sold": "Sold",
+    "recycled": "Recycled",
+    "expired": "Expired",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{page}} of {{pages}}",
+    "myListings": {
+      "allStatus": "All Status",
+      "available": "Available",
+      "pending": "Pending",
+      "sold": "Sold",
+      "recycled": "Recycled",
+      "expired": "Expired",
+      "allTypes": "All Types",
+      "sale": "Sale",
+      "free": "Free",
+      "recycle": "Recycle",
+      "loading": "Loading your listings...",
+      "empty": "You haven't listed any items yet.",
+      "listFirst": "List Your First Item",
+      "listed": "Listed",
+      "viewConversations": "View conversations about this listing",
+      "messages": "Messages"
+    },
+    "listForm": {
+      "title": "List an Item",
+      "listingType": "Listing Type",
+      "itemTitle": "Title",
+      "itemTitlePlaceholder": "Item name",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe the item...",
+      "photos": "Photos (optional, max 5)",
+      "add": "Add",
+      "photoCount": "{{count}}/5 photos added",
+      "category": "Category",
+      "condition": "Condition",
+      "price": "Price ($)",
+      "pricePlaceholder": "0.00",
+      "submitting": "Listing...",
+      "submit": "List Item"
+    },
+    "recycleGuide": {
+      "title": "AI Recycling Guide",
+      "desc": "Describe an item (or upload a photo) and our AI will guide you on how to properly recycle, reuse, or dispose of it.",
+      "placeholder": "Describe the item... e.g. 'Old laptop with cracked screen'",
+      "analyzing": "Analyzing...",
+      "submit": "Get Recycling Guide",
+      "loading": "AI analyzing item...",
+      "recyclable": "Recyclable",
+      "notRecyclable": "Not Recyclable",
+      "reusable": "Reusable",
+      "notReusable": "Not Reusable",
+      "materials": "Materials",
+      "disposalMethod": "Disposal Method",
+      "steps": "Steps",
+      "environmentalImpact": "Environmental Impact",
+      "reuseIdeas": "Reuse Ideas"
+    },
+    "errors": {
+      "loadListings": "Failed to load your listings",
+      "signinMessage": "Sign in to message sellers",
+      "startConversation": "Failed to start conversation",
+      "signinList": "Sign in to list items",
+      "listSuccess": "Item listed successfully!",
+      "listFailed": "Failed to list item",
+      "maxPhotos": "Maximum 5 photos allowed",
+      "imageSize": "Each image must be under 5MB",
+      "analysisFailed": "Analysis failed",
+      "signinBuy": "Sign in to buy items",
+      "purchaseSuccess": "Item purchased!",
+      "purchaseFailed": "Purchase failed",
+      "signinContact": "Sign in to contact sellers",
+      "contactSuccess": "Seller notified! You can now message them.",
+      "contactFailed": "Failed to contact seller"
+    }
+  },
+  "recycle": {
+    "title": "AI Recycle Suggestion",
+    "desc": "Describe or photograph an item to get AI-powered recycling, reuse, and DIY crafting guidance.",
+    "photoLabel": "Photo (optional)",
+    "dragDrop": "Drag and drop an image here, or ",
+    "browse": "browse",
+    "fileHint": "PNG, JPG, WEBP up to 10MB",
+    "takePhoto": "Take Photo",
+    "orDescribe": "or describe below",
+    "descLabel": "Item Description",
+    "descPlaceholder": "e.g. old laptop, plastic bottle, cardboard box...",
+    "analyzing": "Analyzing...",
+    "submit": "Get Suggestion",
+    "loading": "Analyzing item... {{progress}}%",
+    "recyclable": "Recyclable",
+    "notRecyclable": "Not Recyclable",
+    "materials": "Materials",
+    "disposalMethod": "Disposal Method",
+    "steps": "Steps",
+    "environmentalImpact": "Environmental Impact",
+    "reuseIdeas": "Reuse Ideas",
+    "diyIdeas": "DIY / Homemade Item Ideas",
+    "materialsNeeded": "Materials Needed",
+    "howToMake": "How to Make It",
+    "errors": {
+      "invalidFile": "Please upload an image file",
+      "fileSize": "Image must be under 10MB",
+      "analysisFailed": "Analysis failed"
+    }
+  },
+  "knowledge": {
+    "title": "Environmental Knowledge",
+    "desc": "Explore how pollution and time shape Earth's future. Adjust the sliders to simulate environmental impact.",
+    "pollutionLabel": "Pollution Factors Intensity (Traffic, Air Conditioning, Industrial Waste)",
+    "clean": "Clean",
+    "severe": "Severe",
+    "timeLabel": "Time Horizon (Years)",
+    "earthStatus": "Earth Status: ",
+    "impactSummary": "Impact Summary",
+    "vizCaption": "Interactive visualization based on current slider values",
+    "liveMetrics": "Live Impact Metrics",
+    "metricsDesc": "Real-time calculations based on pollution rate and time horizon",
+    "temperature": "Global Temperature Increase",
+    "airQuality": "Air Quality Index",
+    "forestLoss": "Forest Loss",
+    "habitableArea": "Remaining Habitable Area",
+    "aqiBreakdown": "AQI Breakdown",
+    "aqiLabels": {
+      "good": "Good",
+      "moderate": "Moderate",
+      "usg": "USG",
+      "unhealthy": "Unhealthy",
+      "veryUnhealthy": "V.Unhealthy",
+      "hazardous": "Hazardous"
+    },
+    "tierLabels": {
+      "pristine": "Pristine",
+      "stressed": "Stressed",
+      "critical": "Critical",
+      "collapsing": "Collapsing"
+    }
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "desc": "Manage users, listings, and platform settings.",
+    "tabs": {
+      "stats": "Stats",
+      "users": "Users",
+      "listings": "Listings",
+      "posts": "Posts & Campaigns",
+      "createAdmin": "Create Admin"
+    },
+    "stats": {
+      "totalUsers": "Total Users",
+      "admins": "Admins",
+      "totalListings": "Total Listings",
+      "activeListings": "Active Listings",
+      "soldItems": "Sold Items",
+      "recycleListings": "Recycle Listings",
+      "recycledItems": "Recycled Items"
+    },
+    "users": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "joined": "Joined",
+      "actions": "Actions",
+      "user": "User",
+      "admin": "Admin",
+      "pageOf": "Page {{page}} of {{pages}}"
+    },
+    "listings": {
+      "allTypes": "All Types",
+      "sale": "Sale",
+      "free": "Free",
+      "recycle": "Recycle",
+      "title": "Title",
+      "seller": "Seller",
+      "type": "Type",
+      "status": "Status",
+      "price": "Price",
+      "actions": "Actions",
+      "unknown": "Unknown",
+      "pageOf": "Page {{page}} of {{pages}}"
+    },
+    "posts": {
+      "all": "All Posts",
+      "campaignsOnly": "Campaigns Only",
+      "regularOnly": "Regular Posts Only",
+      "loading": "Loading posts...",
+      "empty": "No posts found.",
+      "author": "Author",
+      "content": "Content",
+      "type": "Type",
+      "status": "Status",
+      "likes": "Likes",
+      "date": "Date",
+      "actions": "Actions",
+      "unknown": "Unknown",
+      "campaign": "Campaign",
+      "post": "Post",
+      "statuses": {
+        "proposed": "Proposed",
+        "started": "Started",
+        "completed": "Completed",
+        "ended": "Ended"
+      },
+      "pageOf": "Page {{page}} of {{pages}}"
+    },
+    "createAdmin": {
+      "title": "Create Admin Account",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create Admin Account"
+    },
+    "confirmDeleteUser": "Delete this user?",
+    "userDeleted": "User deleted",
+    "roleUpdated": "Role updated",
+    "confirmDeleteListing": "Delete this listing?",
+    "listingDeleted": "Listing deleted",
+    "confirmDeletePost": "Delete this post?",
+    "postDeleted": "Post deleted",
+    "campaignUpdated": "Campaign status updated",
+    "passwordError": "Password must be at least 8 characters",
+    "adminCreated": "Admin account created",
+    "errors": {
+      "stats": "Failed to load stats",
+      "users": "Failed to load users",
+      "listings": "Failed to load listings",
+      "posts": "Failed to load posts"
+    }
+  },
+  "components": {
+    "loading": "Processing...",
+    "tryAgain": "Try again",
+    "chatPanel": {
+      "campaignChat": "Campaign Chat",
+      "members": " members",
+      "online": " online",
+      "ended": "Ended",
+      "unread": " unread",
+      "membersList": "Members ({{count}})",
+      "you": "(you)",
+      "loadingMessages": "Loading messages...",
+      "noMessages": "No messages yet. Say hello!",
+      "someoneTyping": "Someone is typing",
+      "peopleTyping": "people are typing",
+      "endedBanner": "This campaign has ended. Messaging is disabled.",
+      "typePlaceholder": "Type a message..."
+    },
+    "ecoBot": {
+      "title": "EcoBot",
+      "subtitle": "AI Environmental Assistant",
+      "emptyTitle": "Ask EcoBot Anything",
+      "emptyDesc": "Questions about climate, sustainability, recycling, and green living.",
+      "placeholder": "Ask about environment...",
+      "error": "Sorry, I couldn't process that. Please try again.",
+      "suggestions": {
+        "climateChange": "What is climate change and how does it affect us?",
+        "carbonFootprint": "How can I reduce my carbon footprint at home?",
+        "renewableEnergy": "What are the best renewable energy sources?",
+        "recycling": "How does recycling help the environment?",
+        "oceanAcidification": "What is ocean acidification?",
+        "sustainableLiving": "Tips for sustainable living?"
+      }
+    },
+    "postCard": {
+      "justNow": "just now",
+      "minutesAgo": "m ago",
+      "hoursAgo": "h ago",
+      "daysAgo": "d ago",
+      "join": "Join",
+      "full": "Full",
+      "start": "Start",
+      "end": "End",
+      "proposed": "proposed",
+      "deleteConfirm": "Are you sure you want to delete this post?",
+      "postDeleted": "Post deleted",
+      "joinSuccess": "Joined campaign!",
+      "startSuccess": "Campaign started! Chat created.",
+      "endConfirm": "End this campaign? The group chat will become read-only.",
+      "endSuccess": "Campaign ended.",
+      "error": "Failed"
+    },
+    "createPost": {
+      "placeholder": "Share an update with the community...",
+      "hashtagsPlaceholder": "Hashtags (comma-separated)",
+      "photo": "Photo",
+      "campaign": "Campaign",
+      "needed": "needed",
+      "maxImages": "Maximum 4 images allowed",
+      "imageSize": "exceeds 5MB limit",
+      "created": "Post created!",
+      "error": "Failed to create post"
+    },
+    "commentSection": {
+      "justNow": "just now",
+      "minutesAgo": "m ago",
+      "hoursAgo": "h ago",
+      "daysAgo": "d ago",
+      "comments": "Comments",
+      "viewAll": "View all {{count}} comments",
+      "loading": "Loading comments...",
+      "noComments": "No comments yet.",
+      "placeholder": "Write a comment...",
+      "error": "Failed to post comment"
+    }
+  }
+}

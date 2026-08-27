@@ -45,7 +45,7 @@ export const listItem = async (
       images: images || [],
       category,
       condition,
-      price: listingType === "free" || listingType === "recycle" ? 0 : price,
+      price: listingType === "free" ? 0 : price,
       listingType,
       sellerId: req.user!.id,
       expiresAt,
@@ -237,7 +237,7 @@ export const purchaseItem = async (
       return;
     }
 
-    item.status = item.listingType === "recycle" ? "recycled" : "sold";
+    item.status = "sold";
     await item.save();
 
     res.json({ message: "Purchase successful", item });

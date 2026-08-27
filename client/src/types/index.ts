@@ -15,7 +15,7 @@ export interface MarketplaceItem {
   category: string;
   condition: string;
   price: number;
-  listingType: "sale" | "free" | "recycle";
+  listingType: "sale" | "free";
   sellerId: { _id: string; name: string; avatar?: string };
   pendingBuyerId?: { _id: string; name: string; avatar?: string };
   status: string;

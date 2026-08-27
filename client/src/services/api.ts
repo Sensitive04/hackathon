@@ -254,6 +254,12 @@ export const api = {
       headers: getHeaders(),
     }).then(handleResponse),
 
+  deleteConversation: (conversationId: string) =>
+    fetch(`${API_URL}/messages/${conversationId}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
   // Knowledge Chatbot
   chat: (message: string, history: { role: "user" | "assistant"; content: string }[]) =>
     fetch(`${API_URL}/knowledge/chat`, {
