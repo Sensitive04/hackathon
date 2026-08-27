@@ -31,16 +31,16 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-12 bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md animate-fade-in-up">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-gradient-to-br from-eco-primary to-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-glow-green">
-            <Leaf className="w-7 h-7 text-white" />
+          <div className="w-14 h-14 bg-neu-bg rounded-full flex items-center justify-center mx-auto mb-4 shadow-neu-raised">
+            <Leaf className="w-7 h-7 text-eco-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+          <h1 className="text-2xl font-bold text-neu-text tracking-tight">
             Create your account
           </h1>
-          <p className="text-gray-500 mt-1.5 text-sm">
+          <p className="text-neu-text-secondary mt-1.5 text-sm">
             Join the green revolution
           </p>
         </div>
@@ -85,7 +85,7 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setShowPw(!showPw)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neu-text-muted hover:text-neu-text-secondary p-1 transition-colors"
               >
                 {showPw ? (
                   <EyeOff className="w-4.5 h-4.5" />
@@ -103,7 +103,7 @@ export default function RegisterPage() {
           >
             {loading ? "Creating account..." : "Create Account"}
           </button>
-          <p className="text-center text-sm text-gray-500 pt-1">
+          <p className="text-center text-sm text-neu-text-muted pt-1">
             Already have an account?{" "}
             <Link
               to="/login"

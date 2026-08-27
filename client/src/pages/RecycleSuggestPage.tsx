@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { api } from "../services/api";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import ErrorDisplay from "../components/common/ErrorDisplay";
@@ -39,11 +39,34 @@ export default function RecycleSuggestPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [result, setResult] = useState<RecycleResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const progressRef = useRef<ReturnType<typeof setInterval>>();
+
+  const startProgress = useCallback(() => {
+    setProgress(0);
+    let p = 0;
+    progressRef.current = setInterval(() => {
+      const remaining = 95 - p;
+      const step = Math.max(0.5, remaining * 0.08) * (0.6 + Math.random() * 0.8);
+      p = Math.min(p + step, 95);
+      setProgress(Math.floor(p));
+    }, 350);
+  }, []);
+
+  const finishProgress = useCallback(() => {
+    if (progressRef.current) clearInterval(progressRef.current);
+    setProgress(100);
+    setTimeout(() => setProgress(0), 400);
+  }, []);
+
+  useEffect(() => {
+    return () => { if (progressRef.current) clearInterval(progressRef.current); };
+  }, []);
 
   const handleFile = useCallback((file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -108,6 +131,7 @@ export default function RecycleSuggestPage() {
     setLoading(true);
     setError("");
     setResult(null);
+    startProgress();
     try {
       let imageBase64: string | undefined;
       if (imageFile) {
@@ -118,6 +142,7 @@ export default function RecycleSuggestPage() {
     } catch (err: any) {
       setError(err.message || "Analysis failed");
     } finally {
+      finishProgress();
       setLoading(false);
     }
   };
@@ -126,8 +151,8 @@ export default function RecycleSuggestPage() {
     <div className="page-container">
       <div className="page-header">
         <div className="page-header-row">
-          <div className="page-header-icon bg-gradient-to-br from-green-500 to-emerald-500 shadow-sm">
-            <Recycle className="w-5 h-5 text-white" />
+          <div className="page-header-icon">
+            <Recycle className="w-5 h-5 text-eco-primary" />
           </div>
           <h1 className="page-header-title">AI Recycle Suggestion</h1>
         </div>
@@ -145,12 +170,12 @@ export default function RecycleSuggestPage() {
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="max-h-48 rounded-xl border border-gray-200 shadow-sm"
+                className="max-h-48 rounded-2xl shadow-neu-raised-sm"
               />
               <button
                 type="button"
                 onClick={removeImage}
-                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-all duration-200 shadow-sm active:scale-90"
+                className="absolute -top-2 -right-2 w-6 h-6 bg-neu-red text-white rounded-full flex items-center justify-center hover:brightness-110 transition-all duration-200 shadow-neu-raised-sm active:scale-90"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -161,20 +186,20 @@ export default function RecycleSuggestPage() {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${
+              className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200 ${
                 dragOver
-                  ? "border-eco-primary bg-eco-light/50 shadow-glow-green"
-                  : "border-gray-200 hover:border-eco-primary/40 hover:bg-gray-50/50"
+                  ? "border-eco-primary shadow-neu-pressed"
+                  : "border-neu-shadow-dark/30 hover:border-eco-primary/40 hover:shadow-neu-pressed-sm"
               }`}
             >
-              <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                <Upload className="w-6 h-6 text-gray-400" />
+              <div className="w-12 h-12 bg-neu-bg rounded-full flex items-center justify-center mx-auto mb-3 shadow-neu-pressed-sm">
+                <Upload className="w-6 h-6 text-neu-text-muted" />
               </div>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-neu-text-secondary">
                 Drag and drop an image here, or{" "}
                 <span className="text-eco-primary font-semibold">browse</span>
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-neu-text-muted mt-1">
                 PNG, JPG, WEBP up to 10MB
               </p>
             </div>
@@ -212,9 +237,9 @@ export default function RecycleSuggestPage() {
               if (file) handleFile(file);
             }}
           />
-          <div className="h-px bg-gray-200 flex-1" />
-          <span className="text-xs text-gray-400 font-medium">or describe below</span>
-          <div className="h-px bg-gray-200 flex-1" />
+          <div className="h-px bg-neu-shadow-dark/20 flex-1" />
+          <span className="text-xs text-neu-text-muted font-medium">or describe below</span>
+          <div className="h-px bg-neu-shadow-dark/20 flex-1" />
         </div>
 
         {/* Text Description */}
@@ -238,7 +263,7 @@ export default function RecycleSuggestPage() {
         </button>
       </form>
 
-      {loading && <LoadingSpinner text="Analyzing item..." />}
+      {loading && <LoadingSpinner text={`Analyzing item... ${progress}%`} progress={progress} />}
       {error && <ErrorDisplay message={error} />}
 
       {result && !loading && (
@@ -246,13 +271,13 @@ export default function RecycleSuggestPage() {
           {/* Recycling Analysis */}
           <div className="card">
             <div className="flex items-center gap-3 mb-4">
-              <h2 className="text-xl font-bold text-gray-900 tracking-tight">{result.itemName}</h2>
+              <h2 className="text-xl font-bold text-neu-text tracking-tight">{result.itemName}</h2>
               {result.recyclable ? (
-                <span className="badge bg-green-50 text-green-600 border border-green-200/60">
+                <span className="badge bg-neu-accent/10 text-green-700 shadow-neu-pressed-sm">
                   <CheckCircle className="w-3.5 h-3.5" /> Recyclable
                 </span>
               ) : (
-                <span className="badge bg-red-50 text-red-600 border border-red-200/60">
+                <span className="badge bg-neu-red-light text-red-700 shadow-neu-pressed-sm">
                   <XCircle className="w-3.5 h-3.5" /> Not Recyclable
                 </span>
               )}
@@ -260,10 +285,10 @@ export default function RecycleSuggestPage() {
 
             {result.materials.length > 0 && (
               <div className="mb-4">
-                <h3 className="font-semibold text-gray-700 mb-2 text-sm">Materials</h3>
+                <h3 className="font-semibold text-neu-text-secondary mb-2 text-sm">Materials</h3>
                 <div className="flex flex-wrap gap-1.5">
                   {result.materials.map((m, i) => (
-                    <span key={i} className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-sm font-medium">
+                    <span key={i} className="bg-neu-bg text-neu-text-secondary px-3 py-1 rounded-xl text-sm font-medium shadow-neu-pressed-sm">
                       {m}
                     </span>
                   ))}
@@ -272,17 +297,17 @@ export default function RecycleSuggestPage() {
             )}
 
             <div className="mb-4">
-              <h3 className="font-semibold text-gray-700 mb-2 text-sm">Disposal Method</h3>
-              <p className="text-gray-600 bg-slate-50 p-3 rounded-xl text-sm leading-relaxed">{result.disposalMethod}</p>
+              <h3 className="font-semibold text-neu-text-secondary mb-2 text-sm">Disposal Method</h3>
+              <p className="text-neu-text-secondary bg-neu-bg p-3 rounded-2xl shadow-neu-pressed-sm text-sm leading-relaxed">{result.disposalMethod}</p>
             </div>
 
             {result.steps.length > 0 && (
               <div className="mb-4">
-                <h3 className="font-semibold text-gray-700 mb-2 text-sm">Steps</h3>
+                <h3 className="font-semibold text-neu-text-secondary mb-2 text-sm">Steps</h3>
                 <ol className="space-y-2">
                   {result.steps.map((step, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
-                      <div className="w-5 h-5 bg-eco-light text-eco-primary rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                    <li key={i} className="flex items-start gap-2.5 text-sm text-neu-text-secondary">
+                      <div className="w-5 h-5 bg-neu-bg text-eco-primary rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5 shadow-neu-pressed-sm">
                         {i + 1}
                       </div>
                       <span className="leading-relaxed">{step}</span>
@@ -292,24 +317,24 @@ export default function RecycleSuggestPage() {
               </div>
             )}
 
-            <div className="border-t border-gray-100 pt-4 mt-4">
-              <h3 className="font-semibold text-gray-700 mb-2 text-sm">Environmental Impact</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">{result.environmentalImpact}</p>
+            <div className="border-t border-neu-shadow-dark/15 pt-4 mt-4">
+              <h3 className="font-semibold text-neu-text-secondary mb-2 text-sm">Environmental Impact</h3>
+              <p className="text-neu-text-secondary text-sm leading-relaxed">{result.environmentalImpact}</p>
             </div>
           </div>
 
           {/* Reuse Ideas */}
           {result.reusable && result.reuseIdeas.length > 0 && (
-            <div className="card bg-emerald-50/80 border-emerald-200/60">
-              <h3 className="font-semibold text-emerald-800 mb-3 flex items-center gap-2 text-sm">
-                <div className="w-7 h-7 bg-emerald-100 rounded-lg flex items-center justify-center">
-                  <Recycle className="w-3.5 h-3.5 text-emerald-700" />
+            <div className="card bg-neu-accent/5">
+              <h3 className="font-semibold text-green-800 mb-3 flex items-center gap-2 text-sm">
+                <div className="w-7 h-7 bg-neu-bg rounded-full flex items-center justify-center shadow-neu-pressed-sm">
+                  <Recycle className="w-3.5 h-3.5 text-green-700" />
                 </div>
                 Reuse Ideas
               </h3>
               <ul className="space-y-2">
                 {result.reuseIdeas.map((idea, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm text-emerald-700">
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-green-700">
                     <Recycle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                     <span className="leading-relaxed">{idea}</span>
                   </li>
@@ -320,9 +345,9 @@ export default function RecycleSuggestPage() {
 
           {/* Homemade / DIY Item Ideas */}
           {result.homemadeIdeas && result.homemadeIdeas.length > 0 && (
-            <div className="card bg-amber-50/80 border-amber-200/60">
+            <div className="card bg-neu-amber-light/50">
               <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-neu-bg rounded-full flex items-center justify-center shadow-neu-pressed-sm">
                   <Hammer className="w-4 h-4 text-amber-700" />
                 </div>
                 <h3 className="font-semibold text-amber-800 tracking-tight">
@@ -333,21 +358,21 @@ export default function RecycleSuggestPage() {
                 {result.homemadeIdeas.map((idea, i) => (
                   <div
                     key={i}
-                    className="bg-white rounded-xl p-4 border border-amber-100/80 shadow-sm"
+                    className="bg-neu-bg rounded-2xl p-4 shadow-neu-pressed-sm"
                   >
-                    <h4 className="font-bold text-gray-900 mb-2 tracking-tight">{idea.title}</h4>
-                    <p className="text-sm text-gray-600 mb-3 leading-relaxed">{idea.description}</p>
+                    <h4 className="font-bold text-neu-text mb-2 tracking-tight">{idea.title}</h4>
+                    <p className="text-sm text-neu-text-secondary mb-3 leading-relaxed">{idea.description}</p>
 
                     {idea.materials.length > 0 && (
                       <div className="mb-3">
-                        <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        <p className="text-[11px] font-bold text-neu-text-muted uppercase tracking-wider mb-1.5">
                           Materials Needed
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {idea.materials.map((m, j) => (
                             <span
                               key={j}
-                              className="bg-amber-100 text-amber-700 text-xs px-2.5 py-0.5 rounded-full font-medium"
+                              className="bg-amber-100 text-amber-700 text-xs px-2.5 py-0.5 rounded-xl font-medium shadow-neu-pressed-sm"
                             >
                               {m}
                             </span>
@@ -358,16 +383,16 @@ export default function RecycleSuggestPage() {
 
                     {idea.steps.length > 0 && (
                       <div>
-                        <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        <p className="text-[11px] font-bold text-neu-text-muted uppercase tracking-wider mb-1.5">
                           How to Make It
                         </p>
                         <ol className="space-y-1.5">
                           {idea.steps.map((step, j) => (
                             <li
                               key={j}
-                              className="flex items-start gap-2 text-sm text-gray-600"
+                              className="flex items-start gap-2 text-sm text-neu-text-secondary"
                             >
-                              <span className="w-4 h-4 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                              <span className="w-4 h-4 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5 shadow-neu-pressed-sm">
                                 {j + 1}
                               </span>
                               <span className="leading-relaxed">{step}</span>

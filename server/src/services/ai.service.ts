@@ -1,7 +1,7 @@
 import { getChatCompletion, getVisionCompletion } from "../config/ai.js";
 
 const SYSTEM_PROMPT = [
-  "You are GreenVerse AI, an expert environmental sustainability assistant.",
+  "You are the Smart & Green City AI, an expert environmental sustainability assistant.",
   "You specialize in carbon emissions analysis, urban greening strategies,",
   "energy optimization, and waste management/recycling guidance.",
   "Always provide data-driven, actionable recommendations.",
@@ -75,4 +75,31 @@ export async function analyzeRecycling(imageDescription: string, imageBase64?: s
   }
 
   return extractJSON(response);
+}
+
+const CHAT_SYSTEM_PROMPT = [
+  "You are EcoBot, Smart & Green City Platform's friendly AI environmental assistant.",
+  "You help users learn about climate change, sustainability, recycling, renewable energy,",
+  "biodiversity, carbon footprints, green living tips, and environmental science.",
+  "Be conversational, encouraging, and educational. Keep answers concise (2-4 paragraphs max).",
+  "Use real-world data and examples when possible. If unsure, say so honestly.",
+  "Never fabricate statistics. You may use approximate figures and cite general scientific consensus.",
+].join(" ");
+
+export async function chatWithAI(
+  userMessage: string,
+  history: { role: "user" | "assistant"; content: string }[]
+): Promise<string> {
+  const messages: { role: "system" | "user" | "assistant"; content: string }[] = [
+    { role: "system", content: CHAT_SYSTEM_PROMPT },
+  ];
+
+  const recentHistory = history.slice(-10);
+  for (const msg of recentHistory) {
+    messages.push({ role: msg.role, content: msg.content });
+  }
+
+  messages.push({ role: "user", content: userMessage });
+
+  return getChatCompletion(messages as { role: "system" | "user"; content: string }[]);
 }

@@ -61,10 +61,10 @@ export default function CommentSection({ postId, currentUserId }: Props) {
   const hiddenCount = comments.length - COLLAPSE_COUNT;
 
   return (
-    <div className="mt-3 pt-3 border-t border-slate-100">
+    <div className="mt-3 pt-3 border-t border-neu-shadow-dark/15">
       <div className="flex items-center gap-1.5 mb-2.5">
-        <MessageCircle className="w-3.5 h-3.5 text-gray-400" />
-          <span className="text-xs text-gray-500 font-semibold">
+        <MessageCircle className="w-3.5 h-3.5 text-neu-text-muted" />
+          <span className="text-xs text-neu-text-muted font-semibold">
           {comments.length > 0 ? `${comments.length} comment${comments.length !== 1 ? "s" : ""}` : "Comments"}
         </span>
       </div>
@@ -72,29 +72,29 @@ export default function CommentSection({ postId, currentUserId }: Props) {
       {!loading && comments.length > COLLAPSE_COUNT && !showAll && (
         <button
           onClick={() => setShowAll(true)}
-          className="text-xs text-eco-primary hover:text-emerald-600 mb-2.5 font-semibold transition-colors duration-200"
+          className="text-xs text-eco-primary hover:text-eco-secondary mb-2.5 font-semibold transition-colors duration-200"
         >
           View all {comments.length} comments
         </button>
       )}
 
       {loading && (
-        <p className="text-xs text-gray-400 py-2">Loading comments...</p>
+        <p className="text-xs text-neu-text-muted py-2">Loading comments...</p>
       )}
 
       {!loading && visibleComments.length > 0 && (
         <div className="space-y-2.5 mb-3">
           {visibleComments.map((c) => (
             <div key={c._id} className="flex items-start gap-2 group">
-              <div className="w-6 h-6 bg-gradient-to-br from-eco-primary/80 to-emerald-400 rounded-full flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 bg-neu-bg rounded-full flex items-center justify-center text-eco-primary text-[9px] font-bold flex-shrink-0 mt-0.5 shadow-neu-raised-sm">
                 {c.userId.name?.charAt(0)?.toUpperCase() || "U"}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-xs font-semibold text-gray-900">{c.userId.name}</span>
-                  <span className="text-[10px] text-gray-400">{timeAgo(c.createdAt)}</span>
+                  <span className="text-xs font-semibold text-neu-text">{c.userId.name}</span>
+                  <span className="text-[10px] text-neu-text-muted">{timeAgo(c.createdAt)}</span>
                 </div>
-                <p className="text-xs text-gray-600 whitespace-pre-wrap leading-relaxed">{c.text}</p>
+                <p className="text-xs text-neu-text-secondary whitespace-pre-wrap leading-relaxed">{c.text}</p>
               </div>
             </div>
           ))}
@@ -102,13 +102,13 @@ export default function CommentSection({ postId, currentUserId }: Props) {
       )}
 
       {!loading && comments.length === 0 && (
-        <p className="text-xs text-gray-400 py-1">No comments yet.</p>
+        <p className="text-xs text-neu-text-muted py-1">No comments yet.</p>
       )}
 
       <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
         <input
           type="text"
-          className="flex-1 text-xs !py-2 px-4 rounded-xl border border-slate-200/60 bg-gray-50 text-gray-900 placeholder:text-gray-400 transition-all duration-200 focus:border-eco-primary focus:ring-2 focus:ring-eco-primary/20 focus:outline-none"
+          className="flex-1 text-xs !py-2 px-4 rounded-2xl bg-neu-bg text-neu-text placeholder:text-neu-text-muted transition-all duration-200 shadow-neu-pressed-sm focus:shadow-neu-pressed focus:ring-2 focus:ring-eco-primary/30 focus:outline-none"
           placeholder="Write a comment..."
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
@@ -116,7 +116,7 @@ export default function CommentSection({ postId, currentUserId }: Props) {
         <button
           type="submit"
           disabled={!newComment.trim() || submitting}
-          className="p-2 text-eco-primary disabled:text-gray-300 hover:bg-eco-light rounded-lg transition-all duration-200 active:scale-90"
+          className="p-2 text-eco-primary disabled:text-neu-text-muted hover:shadow-neu-pressed-sm rounded-xl transition-all duration-200 active:scale-90"
         >
           <Send className="w-3.5 h-3.5" />
         </button>

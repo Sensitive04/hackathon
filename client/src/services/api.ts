@@ -110,6 +110,27 @@ export const api = {
       headers: getHeaders(),
     }).then(handleResponse),
 
+  getAdminPosts: (page = 1, type?: string) => {
+    let url = `${API_URL}/admin/posts?page=${page}`;
+    if (type) url += `&type=${type}`;
+    return fetch(url, {
+      headers: getHeaders(),
+    }).then(handleResponse);
+  },
+
+  deleteAdminPost: (id: string) =>
+    fetch(`${API_URL}/admin/posts/${id}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    }).then(handleResponse),
+
+  updateAdminCampaignStatus: (id: string, status: string) =>
+    fetch(`${API_URL}/admin/posts/${id}/campaign-status`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify({ status }),
+    }).then(handleResponse),
+
   getAdminStats: () =>
     fetch(`${API_URL}/admin/stats`, {
       headers: getHeaders(),
@@ -233,4 +254,11 @@ export const api = {
       headers: getHeaders(),
     }).then(handleResponse),
 
+  // Knowledge Chatbot
+  chat: (message: string, history: { role: "user" | "assistant"; content: string }[]) =>
+    fetch(`${API_URL}/knowledge/chat`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ message, history }),
+    }).then(handleResponse),
 };

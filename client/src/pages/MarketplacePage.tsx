@@ -15,6 +15,8 @@ import {
   XCircle,
   Package,
   MessageCircle,
+  X,
+  ImagePlus,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { MarketplaceItem, RecyclingAnalysis } from "../types";
@@ -45,6 +47,7 @@ export default function MarketplacePage() {
     price: "",
     listingType: "sale" as "sale" | "free" | "recycle",
   });
+  const [listImages, setListImages] = useState<string[]>([]);
   const [listingLoading, setListingLoading] = useState(false);
 
   const [recycleDesc, setRecycleDesc] = useState("");
@@ -122,6 +125,7 @@ export default function MarketplacePage() {
     try {
       await api.listItem({
         ...listForm,
+        images: listImages,
         price: listForm.listingType === "free" || listForm.listingType === "recycle" ? 0 : parseFloat(listForm.price) || 0,
       });
       toast.success("Item listed successfully!");
@@ -133,6 +137,7 @@ export default function MarketplacePage() {
         price: "",
         listingType: "sale",
       });
+      setListImages([]);
       setTab("browse");
       fetchItems(1);
     } catch (err: any) {
@@ -140,6 +145,33 @@ export default function MarketplacePage() {
     } finally {
       setListingLoading(false);
     }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    const remaining = 5 - listImages.length;
+    if (remaining <= 0) {
+      toast.error("Maximum 5 photos allowed");
+      return;
+    }
+    Array.from(files).slice(0, remaining).forEach((file) => {
+      if (!file.type.startsWith("image/")) return;
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Each image must be under 5MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        setListImages((prev) => [...prev, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = "";
+  };
+
+  const removeImage = (index: number) => {
+    setListImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleRecycle = async (e: React.FormEvent) => {
@@ -201,19 +233,19 @@ export default function MarketplacePage() {
   ];
 
   const statusColors: Record<string, string> = {
-    available: "bg-green-50 text-green-700 border border-green-200/60",
-    pending: "bg-amber-50 text-amber-700 border border-amber-200/60",
-    sold: "bg-blue-50 text-blue-700 border border-blue-200/60",
-    recycled: "bg-emerald-50 text-emerald-700 border border-emerald-200/60",
-    expired: "bg-gray-50 text-gray-500 border border-gray-200/60",
+    available: "bg-neu-accent/10 text-green-700 shadow-neu-pressed-sm",
+    pending: "bg-neu-amber-light text-amber-700 shadow-neu-pressed-sm",
+    sold: "bg-neu-blue-light text-blue-700 shadow-neu-pressed-sm",
+    recycled: "bg-neu-accent/10 text-emerald-700 shadow-neu-pressed-sm",
+    expired: "bg-neu-bg text-neu-text-muted shadow-neu-pressed-sm",
   };
 
   return (
     <div className="page-container">
       <div className="page-header">
         <div className="page-header-row">
-          <div className="page-header-icon bg-gradient-to-br from-purple-500 to-violet-500 shadow-sm">
-            <Recycle className="w-5 h-5 text-white" />
+          <div className="page-header-icon">
+            <Recycle className="w-5 h-5 text-purple-500" />
           </div>
           <h1 className="page-header-title">
             Garbage Management & Marketplace
@@ -225,7 +257,7 @@ export default function MarketplacePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-8 border-b border-slate-200 overflow-x-auto -mb-px">
+      <div className="flex gap-2 mb-8 overflow-x-auto">
         {[
           { key: "browse", label: "Marketplace", icon: ShoppingCart },
           ...(user ? [
@@ -237,10 +269,10 @@ export default function MarketplacePage() {
           <button
             key={t.key}
             onClick={() => setTab(t.key as Tab)}
-            className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm border-b-2 transition-all duration-200 whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2.5 font-semibold text-sm rounded-2xl transition-all duration-200 whitespace-nowrap ${
               tab === t.key
-                ? "border-eco-primary text-eco-primary"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                ? "neu-tab-active"
+                : "neu-tab-inactive"
             }`}
           >
             <t.icon className="w-4 h-4" />
@@ -255,7 +287,7 @@ export default function MarketplacePage() {
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <form onSubmit={handleSearch} className="flex gap-2 flex-1">
               <div className="relative flex-1">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neu-text-muted" />
                 <input
                   type="text"
                   className="input-field pl-10"
@@ -297,25 +329,34 @@ export default function MarketplacePage() {
 
           {!loading && items.length === 0 && (
             <div className="card text-center py-12">
-              <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                <Package className="w-7 h-7 text-gray-300" />
+              <div className="w-14 h-14 bg-neu-bg rounded-full flex items-center justify-center mx-auto mb-3 shadow-neu-pressed-sm">
+                <Package className="w-7 h-7 text-neu-text-muted" />
               </div>
-              <p className="text-gray-500 font-medium">No items found. Be the first to list!</p>
+              <p className="text-neu-text-secondary font-medium">No items found. Be the first to list!</p>
             </div>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {items.map((item) => (
               <div key={item._id} className="card group">
+                {item.images && item.images.length > 0 && (
+                  <div className="mb-3 -mx-1 -mt-1 rounded-xl overflow-hidden">
+                    <img
+                      src={item.images[0]}
+                      alt={item.title}
+                      className="w-full h-40 object-cover"
+                    />
+                  </div>
+                )}
                 <div className="flex items-start justify-between mb-3">
-                  <h3 className="font-bold text-gray-900 tracking-tight group-hover:text-eco-primary transition-colors duration-200">{item.title}</h3>
+                  <h3 className="font-bold text-neu-text tracking-tight group-hover:text-eco-primary transition-colors duration-200">{item.title}</h3>
                   <span
                     className={`badge ${
                       item.listingType === "free"
-                        ? "bg-green-50 text-green-700 border border-green-200/60"
+                        ? "bg-neu-accent/10 text-green-700 shadow-neu-pressed-sm"
                         : item.listingType === "recycle"
-                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                        : "bg-purple-50 text-purple-700 border border-purple-200/60"
+                        ? "bg-neu-accent/10 text-emerald-700 shadow-neu-pressed-sm"
+                        : "bg-purple-100 text-purple-700 shadow-neu-pressed-sm"
                     }`}
                   >
                     {item.listingType === "free"
@@ -325,16 +366,16 @@ export default function MarketplacePage() {
                       : `$${item.price}`}
                   </span>
                 </div>
-                <p className="text-sm text-gray-500 mb-3 line-clamp-2 leading-relaxed">
+                <p className="text-sm text-neu-text-secondary mb-3 line-clamp-2 leading-relaxed">
                   {item.description}
                 </p>
-                <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
+                <div className="flex items-center justify-between text-xs text-neu-text-muted mb-3">
                   <span className="capitalize font-medium">{item.category}</span>
                   <span className="capitalize font-medium">{item.condition}</span>
                 </div>
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                  <span className="text-xs text-gray-400">
-                    by <span className="font-medium text-gray-500">{item.sellerId?.name || "Unknown"}</span>
+                <div className="flex items-center justify-between pt-3 border-t border-neu-shadow-dark/15">
+                  <span className="text-xs text-neu-text-muted">
+                    by <span className="font-medium text-neu-text-secondary">{item.sellerId?.name || "Unknown"}</span>
                   </span>
                   <div className="flex gap-2">
                     {item.sellerId && user && item.sellerId._id !== user.id && (
@@ -345,7 +386,7 @@ export default function MarketplacePage() {
                             item._id
                           )
                         }
-                        className="p-1.5 text-gray-400 hover:text-eco-primary hover:bg-eco-light/50 rounded-lg transition-all duration-200"
+                        className="p-1.5 text-neu-text-muted hover:text-eco-primary hover:shadow-neu-pressed-sm rounded-xl transition-all duration-200"
                         title="Message Seller"
                       >
                         <MessageCircle className="w-4 h-4" />
@@ -373,17 +414,17 @@ export default function MarketplacePage() {
                       </button>
                     )}
                     {item.status === "pending" && (
-                      <span className="badge text-xs !py-1 !px-2.5 bg-amber-50 text-amber-700 border border-amber-200/60">
+                      <span className="badge text-xs !py-1 !px-2.5 bg-neu-amber-light text-amber-700 shadow-neu-pressed-sm">
                         Pending
                       </span>
                     )}
                     {item.status !== "available" && item.status !== "pending" && (
                       <span className={`badge text-xs !py-1 !px-2.5 ${
                         item.status === "sold"
-                          ? "bg-blue-50 text-blue-700 border border-blue-200/60"
+                          ? "bg-neu-blue-light text-blue-700 shadow-neu-pressed-sm"
                           : item.status === "recycled"
-                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                          : "bg-gray-50 text-gray-500 border border-gray-200/60"
+                          ? "bg-neu-accent/10 text-emerald-700 shadow-neu-pressed-sm"
+                          : "bg-neu-bg text-neu-text-muted shadow-neu-pressed-sm"
                       }`}>
                         {item.status === "sold" ? "Sold" : item.status === "recycled" ? "Recycled" : "Expired"}
                       </span>
@@ -399,17 +440,17 @@ export default function MarketplacePage() {
               <button
                 onClick={() => fetchItems(page - 1)}
                 disabled={page <= 1}
-                className="btn-ghost text-sm !px-3 !py-1.5 border border-gray-200 disabled:opacity-30"
+                className="btn-ghost text-sm !px-3 !py-1.5 shadow-neu-raised-sm disabled:opacity-30"
               >
                 Previous
               </button>
-              <span className="text-sm text-gray-500 font-medium">
+              <span className="text-sm text-neu-text-secondary font-medium">
                 Page {page} of {pages}
               </span>
               <button
                 onClick={() => fetchItems(page + 1)}
                 disabled={page >= pages}
-                className="btn-ghost text-sm !px-3 !py-1.5 border border-gray-200 disabled:opacity-30"
+                className="btn-ghost text-sm !px-3 !py-1.5 shadow-neu-raised-sm disabled:opacity-30"
               >
                 Next
               </button>
@@ -450,10 +491,10 @@ export default function MarketplacePage() {
 
           {!loading && myItems.length === 0 && (
             <div className="card text-center py-12">
-              <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                <Package className="w-7 h-7 text-gray-300" />
+              <div className="w-14 h-14 bg-neu-bg rounded-full flex items-center justify-center mx-auto mb-3 shadow-neu-pressed-sm">
+                <Package className="w-7 h-7 text-neu-text-muted" />
               </div>
-              <p className="text-gray-500 font-medium">You haven&apos;t listed any items yet.</p>
+              <p className="text-neu-text-secondary font-medium">You haven&apos;t listed any items yet.</p>
               <button
                 onClick={() => setTab("list")}
                 className="btn-primary mt-4 text-sm"
@@ -466,36 +507,45 @@ export default function MarketplacePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {myItems.map((item) => (
               <div key={item._id} className="card group">
+                {item.images && item.images.length > 0 && (
+                  <div className="mb-3 -mx-1 -mt-1 rounded-xl overflow-hidden">
+                    <img
+                      src={item.images[0]}
+                      alt={item.title}
+                      className="w-full h-40 object-cover"
+                    />
+                  </div>
+                )}
                 <div className="flex items-start justify-between mb-3">
-                  <h3 className="font-bold text-gray-900 tracking-tight">{item.title}</h3>
+                  <h3 className="font-bold text-neu-text tracking-tight">{item.title}</h3>
                   <div className="flex items-center gap-2">
                     <span
                       className={`badge ${
-                        statusColors[item.status] || "bg-gray-50 text-gray-500 border border-gray-200/60"
+                        statusColors[item.status] || "bg-neu-bg text-neu-text-muted shadow-neu-pressed-sm"
                       }`}
                     >
                       {item.status}
                     </span>
                   </div>
                 </div>
-                <p className="text-sm text-gray-500 mb-3 line-clamp-2 leading-relaxed">
+                <p className="text-sm text-neu-text-secondary mb-3 line-clamp-2 leading-relaxed">
                   {item.description}
                 </p>
-                <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
+                <div className="flex items-center justify-between text-xs text-neu-text-muted mb-3">
                   <span className="capitalize font-medium">{item.category}</span>
                     <span
                       className={`badge ${
                         item.listingType === "free"
-                          ? "bg-green-50 text-green-700 border border-green-200/60"
+                          ? "bg-neu-accent/10 text-green-700 shadow-neu-pressed-sm"
                           : item.listingType === "recycle"
-                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                          : "bg-purple-50 text-purple-700 border border-purple-200/60"
+                          ? "bg-neu-accent/10 text-emerald-700 shadow-neu-pressed-sm"
+                          : "bg-purple-100 text-purple-700 shadow-neu-pressed-sm"
                       }`}
                     >
                     {item.listingType === "sale" ? `$${item.price}` : item.listingType}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-xs text-gray-400 border-t border-gray-100 pt-3">
+                <div className="flex items-center justify-between text-xs text-neu-text-muted border-t border-neu-shadow-dark/15 pt-3">
                   <span>Listed {new Date(item.createdAt).toLocaleDateString()}</span>
                   <button
                     onClick={() => navigate(`/messages?listing=${item._id}`)}
@@ -515,7 +565,7 @@ export default function MarketplacePage() {
       {/* List Item */}
       {tab === "list" && (
         <form onSubmit={handleList} className="card w-full animate-fade-in">
-          <h2 className="font-bold mb-4 tracking-tight text-gray-900">List an Item</h2>
+          <h2 className="font-bold mb-4 tracking-tight text-neu-text">List an Item</h2>
           <div className="space-y-4">
             <div>
               <label className="label">Listing Type</label>
@@ -527,10 +577,10 @@ export default function MarketplacePage() {
                     onClick={() =>
                       setListForm({ ...listForm, listingType: type as any })
                     }
-                    className={`p-3 rounded-xl border-2 text-center capitalize font-semibold text-sm transition-all duration-200 active:scale-[0.97] ${
+                    className={`p-3 rounded-2xl text-center capitalize font-semibold text-sm transition-all duration-200 active:scale-[0.97] ${
                       listForm.listingType === type
-                        ? "border-eco-primary bg-eco-light text-eco-primary shadow-sm"
-                        : "border-gray-200 text-gray-500 hover:border-gray-300"
+                        ? "shadow-neu-pressed bg-eco-primary text-white"
+                        : "shadow-neu-raised-sm bg-neu-bg text-neu-text-secondary hover:shadow-neu-hover"
                     }`}
                   >
                     {type}
@@ -564,6 +614,40 @@ export default function MarketplacePage() {
                 }
                 required
               />
+            </div>
+
+            <div>
+              <label className="label">Photos (optional, max 5)</label>
+              <div className="flex flex-wrap gap-2">
+                {listImages.map((img, i) => (
+                  <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden shadow-neu-raised-sm group">
+                    <img src={img} alt={`Upload ${i + 1}`} className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(i)}
+                      className="absolute top-1 right-1 w-5 h-5 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3 text-white" />
+                    </button>
+                  </div>
+                ))}
+                {listImages.length < 5 && (
+                  <label className="w-20 h-20 rounded-xl border-2 border-dashed border-neu-shadow-dark/25 flex flex-col items-center justify-center cursor-pointer hover:border-eco-primary/50 hover:bg-eco-primary/5 transition-all duration-200">
+                    <ImagePlus className="w-5 h-5 text-neu-text-muted" />
+                    <span className="text-[10px] text-neu-text-muted mt-0.5 font-medium">Add</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleImageUpload}
+                    />
+                  </label>
+                )}
+              </div>
+              {listImages.length > 0 && (
+                <p className="text-[11px] text-neu-text-muted mt-1.5">{listImages.length}/5 photos added</p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -634,12 +718,12 @@ export default function MarketplacePage() {
         <div className="w-full">
           <form onSubmit={handleRecycle} className="card mb-6">
             <h2 className="font-bold mb-4 flex items-center gap-2 tracking-tight">
-              <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-neu-bg rounded-full flex items-center justify-center shadow-neu-pressed-sm">
                 <Camera className="w-4 h-4 text-purple-500" />
               </div>
               AI Recycling Guide
             </h2>
-            <p className="text-sm text-gray-500 mb-4 leading-relaxed">
+            <p className="text-sm text-neu-text-secondary mb-4 leading-relaxed">
               Describe an item (or upload a photo) and our AI will guide you on
               how to properly recycle, reuse, or dispose of it.
             </p>
@@ -666,34 +750,34 @@ export default function MarketplacePage() {
 
           {recycleResult && !recycleLoading && (
             <div className="card animate-fade-in">
-              <h3 className="font-bold text-lg mb-4 tracking-tight">{recycleResult.itemName}</h3>
+              <h3 className="font-bold text-lg mb-4 tracking-tight text-neu-text">{recycleResult.itemName}</h3>
 
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="flex items-center gap-2.5">
                   {recycleResult.recyclable ? (
-                    <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-neu-bg rounded-full flex items-center justify-center shadow-neu-pressed-sm">
                       <CheckCircle className="w-4 h-4 text-green-500" />
                     </div>
                   ) : (
-                    <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-neu-bg rounded-full flex items-center justify-center shadow-neu-pressed-sm">
                       <XCircle className="w-4 h-4 text-red-500" />
                     </div>
                   )}
-                  <span className="font-semibold text-sm">
+                  <span className="font-semibold text-sm text-neu-text">
                     {recycleResult.recyclable ? "Recyclable" : "Not Recyclable"}
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   {recycleResult.reusable ? (
-                    <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-neu-bg rounded-full flex items-center justify-center shadow-neu-pressed-sm">
                       <CheckCircle className="w-4 h-4 text-green-500" />
                     </div>
                   ) : (
-                    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <XCircle className="w-4 h-4 text-gray-400" />
+                    <div className="w-8 h-8 bg-neu-bg rounded-full flex items-center justify-center shadow-neu-pressed-sm">
+                      <XCircle className="w-4 h-4 text-neu-text-muted" />
                     </div>
                   )}
-                  <span className="font-semibold text-sm">
+                  <span className="font-semibold text-sm text-neu-text">
                     {recycleResult.reusable ? "Reusable" : "Not Reusable"}
                   </span>
                 </div>
@@ -701,14 +785,14 @@ export default function MarketplacePage() {
 
               {recycleResult.materials?.length > 0 && (
                 <div className="mb-4">
-                  <h4 className="font-semibold mb-2 flex items-center gap-1.5 text-sm">
+                  <h4 className="font-semibold mb-2 flex items-center gap-1.5 text-sm text-neu-text-secondary">
                     <Tag className="w-4 h-4" /> Materials
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
                     {recycleResult.materials.map((m, i) => (
                       <span
                         key={i}
-                        className="bg-slate-100 text-slate-700 text-xs px-2.5 py-1 rounded-full font-medium"
+                        className="bg-neu-bg text-neu-text-secondary text-xs px-2.5 py-1 rounded-xl font-medium shadow-neu-pressed-sm"
                       >
                         {m}
                       </span>
@@ -718,22 +802,22 @@ export default function MarketplacePage() {
               )}
 
               <div className="mb-4">
-                <h4 className="font-semibold mb-2 text-sm">Disposal Method</h4>
-                <p className="text-sm text-gray-600 bg-slate-50 p-3 rounded-xl leading-relaxed">
+                <h4 className="font-semibold mb-2 text-sm text-neu-text-secondary">Disposal Method</h4>
+                <p className="text-sm text-neu-text-secondary bg-neu-bg p-3 rounded-2xl shadow-neu-pressed-sm leading-relaxed">
                   {recycleResult.disposalMethod}
                 </p>
               </div>
 
               {recycleResult.steps?.length > 0 && (
                 <div className="mb-4">
-                  <h4 className="font-semibold mb-2 text-sm">Steps</h4>
+                  <h4 className="font-semibold mb-2 text-sm text-neu-text-secondary">Steps</h4>
                   <ol className="space-y-2">
                     {recycleResult.steps.map((step, i) => (
                       <li
                         key={i}
-                        className="flex items-start gap-2.5 text-sm text-gray-600"
+                        className="flex items-start gap-2.5 text-sm text-neu-text-secondary"
                       >
-                        <span className="w-5 h-5 bg-eco-light text-eco-primary rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                        <span className="w-5 h-5 bg-neu-bg text-eco-primary rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5 shadow-neu-pressed-sm">
                           {i + 1}
                         </span>
                         <span className="leading-relaxed">{step}</span>
@@ -744,7 +828,7 @@ export default function MarketplacePage() {
               )}
 
               {recycleResult.environmentalImpact && (
-                <div className="bg-green-50/80 p-4 rounded-xl border border-green-200/60">
+                <div className="bg-neu-accent/10 p-4 rounded-2xl shadow-neu-pressed-sm">
                   <h4 className="font-semibold text-green-800 mb-1 text-sm">
                     Environmental Impact
                   </h4>
@@ -757,12 +841,12 @@ export default function MarketplacePage() {
               {recycleResult.reusable &&
                 recycleResult.reuseIdeas?.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="font-semibold mb-2 text-sm">Reuse Ideas</h4>
+                    <h4 className="font-semibold mb-2 text-sm text-neu-text-secondary">Reuse Ideas</h4>
                     <ul className="space-y-1.5">
                       {recycleResult.reuseIdeas.map((idea, i) => (
                         <li
                           key={i}
-                          className="text-sm text-gray-600 flex items-center gap-2"
+                          className="text-sm text-neu-text-secondary flex items-center gap-2"
                         >
                           <span className="w-1.5 h-1.5 bg-eco-primary rounded-full flex-shrink-0" />
                           <span className="leading-relaxed">{idea}</span>

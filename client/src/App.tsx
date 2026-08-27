@@ -10,6 +10,7 @@ import RecycleSuggestPage from "./pages/RecycleSuggestPage";
 import MarketplacePage from "./pages/MarketplacePage";
 import AdminPage from "./pages/AdminPage";
 import MessagesPage from "./pages/MessagesPage";
+import KnowledgePage from "./pages/KnowledgePage";
 import AdminRoute from "./components/common/AdminRoute";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -19,7 +20,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-neu-bg">
       <Navbar />
       <main className="flex-1">
         <Routes>
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/satellite" element={<SatellitePage />} />
           <Route path="/recycle" element={<RecycleSuggestPage />} />
+          <Route path="/knowledge" element={<KnowledgePage />} />
           <Route path="/marketplace" element={<MarketplacePage />} />
           <Route
             path="/activity"

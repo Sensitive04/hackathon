@@ -4,7 +4,8 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    background-color: #e0f2e9;
+    @apply text-neu-text antialiased;
   }
 
   * {
@@ -15,70 +16,73 @@
 @layer components {
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2
-           bg-eco-primary hover:bg-eco-secondary text-white font-semibold
-           py-2.5 px-6 rounded-xl
-           shadow-md hover:shadow-glow-green
+           bg-eco-primary text-white font-semibold
+           py-2.5 px-6 rounded-2xl
+           shadow-neu-raised
            transition-all duration-200 ease-out
-           active:scale-[0.97] active:shadow-sm
+           active:shadow-neu-pressed active:scale-[0.98]
+           hover:shadow-neu-hover hover:brightness-105
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-eco-primary/50 focus-visible:ring-offset-2
-           disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 disabled:hover:shadow-md;
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 disabled:hover:shadow-neu-raised;
   }
 
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2
-           bg-white border-2 border-eco-primary/30 text-eco-primary font-semibold
-           py-2.5 px-6 rounded-xl
+           bg-neu-bg text-neu-accent font-semibold
+           py-2.5 px-6 rounded-2xl
+           shadow-neu-raised
            transition-all duration-200 ease-out
-           hover:border-eco-primary hover:bg-eco-light/50 hover:shadow-sm
-           active:scale-[0.97]
+           hover:shadow-neu-hover
+           active:shadow-neu-pressed active:scale-[0.98]
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-eco-primary/30 focus-visible:ring-offset-2
            disabled:opacity-40 disabled:cursor-not-allowed;
   }
 
   .btn-danger {
     @apply inline-flex items-center justify-center gap-2
-           bg-red-500 hover:bg-red-600 text-white font-semibold
-           py-2.5 px-6 rounded-xl
-           shadow-md hover:shadow-lg
+           bg-neu-red text-white font-semibold
+           py-2.5 px-6 rounded-2xl
+           shadow-neu-raised
            transition-all duration-200 ease-out
-           active:scale-[0.97]
+           active:shadow-neu-pressed active:scale-[0.98]
+           hover:shadow-neu-hover hover:brightness-105
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 focus-visible:ring-offset-2
            disabled:opacity-40 disabled:cursor-not-allowed;
   }
 
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2
-           text-gray-600 font-medium
-           py-2 px-4 rounded-xl
+           text-neu-text-secondary font-medium
+           py-2 px-4 rounded-2xl
            transition-all duration-200 ease-out
-           hover:bg-gray-100 hover:text-gray-900
-           active:scale-[0.97]
+           hover:shadow-neu-raised-sm hover:text-neu-text
+           active:shadow-neu-pressed-sm
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 focus-visible:ring-offset-2;
   }
 
   .card {
-    @apply bg-white rounded-2xl shadow-card border border-slate-100 p-6
-           transition-all duration-300 ease-out
-           hover:shadow-card-hover;
+    @apply bg-neu-bg rounded-3xl shadow-neu-raised p-6
+           transition-all duration-300 ease-out;
   }
 
   .card-interactive {
     @apply card cursor-pointer
-           hover:-translate-y-0.5
-           active:translate-y-0 active:shadow-card;
+           hover:shadow-neu-hover hover:-translate-y-0.5
+           active:translate-y-0 active:shadow-neu-pressed;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 rounded-xl
-           border border-gray-200 bg-white text-gray-900
-           placeholder:text-gray-400
+    @apply w-full px-4 py-3 rounded-2xl
+           bg-neu-bg text-neu-text
+           shadow-neu-pressed
+           placeholder:text-neu-text-muted
            transition-all duration-200 ease-out
-           focus:border-eco-primary focus:ring-2 focus:ring-eco-primary/10 focus:outline-none
-           hover:border-gray-300;
+           focus:shadow-neu-pressed focus:ring-2 focus:ring-eco-primary/30 focus:outline-none
+           hover:shadow-neu-concave;
   }
 
   .label {
-    @apply block text-sm font-medium text-gray-700 mb-1.5 tracking-tight;
+    @apply block text-sm font-medium text-neu-text-secondary mb-1.5 tracking-tight;
   }
 
   .page-container {
@@ -90,11 +94,11 @@
   }
 
   .badge {
-    @apply inline-flex items-center gap-1 text-xs font-medium px-2.5 py-0.5 rounded-full;
+    @apply inline-flex items-center gap-1 text-xs font-medium px-2.5 py-0.5 rounded-xl;
   }
 
   .section-title {
-    @apply text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight;
+    @apply text-2xl lg:text-3xl font-bold text-neu-text tracking-tight;
   }
 
   .page-header {
@@ -106,18 +110,38 @@
   }
 
   .page-header-icon {
-    @apply w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0;
+    @apply w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0
+           bg-neu-bg shadow-neu-raised-sm text-eco-primary;
   }
 
   .page-header-title {
-    @apply text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight;
+    @apply text-2xl lg:text-3xl font-bold text-neu-text tracking-tight;
   }
 
   .page-header-desc {
-    @apply text-gray-500 mt-1 text-sm leading-relaxed;
+    @apply text-neu-text-secondary mt-1 text-sm leading-relaxed;
   }
 
   .glass-card {
-    @apply backdrop-blur-md bg-white/80 border-white/40 shadow-float;
+    @apply bg-neu-bg rounded-3xl shadow-neu-raised-lg;
+  }
+
+  .neu-icon-circle {
+    @apply w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0
+           bg-neu-bg shadow-neu-raised-sm;
+  }
+
+  .neu-icon-circle-sm {
+    @apply w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0
+           bg-neu-bg shadow-neu-raised-sm;
+  }
+
+  .neu-tab-active {
+    @apply bg-eco-primary text-white shadow-neu-pressed;
+  }
+
+  .neu-tab-inactive {
+    @apply bg-neu-bg text-neu-text-secondary shadow-neu-raised-sm
+           hover:shadow-neu-hover hover:text-neu-text;
   }
 }

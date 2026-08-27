@@ -42,11 +42,34 @@ export default function SatellitePage() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [airData, setAirData] = useState<CityAirData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [mapCenter, setMapCenter] = useState<[number, number]>([DEFAULT_LAT, DEFAULT_LNG]);
   const [mapZoom, setMapZoom] = useState(11);
   const [hasSearched, setHasSearched] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const progressRef = useRef<ReturnType<typeof setInterval>>();
+
+  const startProgress = useCallback(() => {
+    setProgress(0);
+    let p = 0;
+    progressRef.current = setInterval(() => {
+      const remaining = 95 - p;
+      const step = Math.max(0.5, remaining * 0.08) * (0.6 + Math.random() * 0.8);
+      p = Math.min(p + step, 95);
+      setProgress(Math.floor(p));
+    }, 350);
+  }, []);
+
+  const finishProgress = useCallback(() => {
+    if (progressRef.current) clearInterval(progressRef.current);
+    setProgress(100);
+    setTimeout(() => setProgress(0), 400);
+  }, []);
+
+  useEffect(() => {
+    return () => { if (progressRef.current) clearInterval(progressRef.current); };
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -62,12 +85,14 @@ export default function SatellitePage() {
     (async () => {
       setLoading(true);
       setHasSearched(true);
+      startProgress();
       try {
         const data = await getCityAirData(DEFAULT_CITY, DEFAULT_LAT, DEFAULT_LNG);
         setAirData(data);
       } catch {
         setAirData(null);
       } finally {
+        finishProgress();
         setLoading(false);
       }
     })();
@@ -95,12 +120,14 @@ export default function SatellitePage() {
     setHasSearched(true);
     setMapCenter([lat, lng]);
     setMapZoom(11);
+    startProgress();
     try {
       const data = await getCityAirData(name, lat, lng);
       setAirData(data);
     } catch {
       setAirData(null);
     } finally {
+      finishProgress();
       setLoading(false);
     }
   }, []);
@@ -115,6 +142,7 @@ export default function SatellitePage() {
     if (!searchQuery.trim()) return;
     setLoading(true);
     setHasSearched(true);
+    startProgress();
     try {
       const results = await searchCity(searchQuery);
       if (results.length > 0) {
@@ -130,6 +158,7 @@ export default function SatellitePage() {
     } catch {
       setAirData(null);
     } finally {
+      finishProgress();
       setLoading(false);
     }
   };
@@ -144,8 +173,8 @@ export default function SatellitePage() {
     <div className="page-container">
       <div className="page-header">
         <div className="page-header-row">
-          <div className="page-header-icon bg-gradient-to-br from-blue-500 to-blue-600 shadow-sm">
-            <Satellite className="w-5 h-5 text-white" />
+          <div className="page-header-icon">
+            <Satellite className="w-5 h-5 text-blue-500" />
           </div>
           <h1 className="page-header-title">Green Map</h1>
         </div>
@@ -157,7 +186,7 @@ export default function SatellitePage() {
       <div className="relative mb-6" ref={searchRef}>
         <form onSubmit={handleSearchSubmit} className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neu-text-muted" />
             <input
               type="text"
               className="input-field pl-10"
@@ -173,30 +202,30 @@ export default function SatellitePage() {
           </button>
         </form>
         {showSuggestions && suggestions.length > 0 && (
-          <div className="absolute z-50 top-full left-0 right-0 mt-1.5 bg-white border border-slate-200 rounded-xl shadow-float overflow-hidden animate-fade-in-down">
+          <div className="absolute z-50 top-full left-0 right-0 mt-1.5 bg-neu-bg rounded-2xl shadow-neu-raised-lg overflow-hidden animate-fade-in-down">
             {suggestions.map((s, i) => (
               <button
                 key={i}
-                className="w-full text-left px-4 py-3 hover:bg-eco-light/30 transition-colors flex items-center gap-3 border-b border-slate-50 last:border-0"
+                className="w-full text-left px-4 py-3 hover:shadow-neu-pressed-sm transition-all flex items-center gap-3 border-b border-neu-shadow-dark/10 last:border-0"
                 onClick={() => handleSelectCity(s.name, s.lat, s.lng)}
               >
-                <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                <span className="text-sm text-gray-700 font-medium">{s.name}</span>
+                <MapPin className="w-4 h-4 text-neu-text-muted flex-shrink-0" />
+                <span className="text-sm text-neu-text font-medium">{s.name}</span>
               </button>
             ))}
           </div>
         )}
       </div>
 
-      {loading && <LoadingSpinner text="Fetching air quality data..." />}
+      {loading && <LoadingSpinner text={`Fetching air quality data... ${progress}%`} progress={progress} />}
 
       {!loading && !hasSearched && (
         <div className="card text-center py-16">
-          <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Satellite className="w-8 h-8 text-gray-300" />
+          <div className="w-16 h-16 bg-neu-bg rounded-full flex items-center justify-center mx-auto mb-4 shadow-neu-pressed">
+            <Satellite className="w-8 h-8 text-neu-text-muted" />
           </div>
-          <h3 className="text-lg font-bold text-gray-400 mb-2 tracking-tight">Search a city to get started</h3>
-          <p className="text-sm text-gray-400 max-w-lg mx-auto leading-relaxed">
+          <h3 className="text-lg font-bold text-neu-text-muted mb-2 tracking-tight">Search a city to get started</h3>
+          <p className="text-sm text-neu-text-muted max-w-lg mx-auto leading-relaxed">
             Enter any city name above to view its CO&#8322; concentration levels, air quality index, and personalized tree planting recommendations.
           </p>
         </div>
@@ -204,10 +233,10 @@ export default function SatellitePage() {
 
       {!loading && hasSearched && !airData && (
         <div className="card text-center py-12">
-          <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <MapPin className="w-7 h-7 text-gray-300" />
+          <div className="w-14 h-14 bg-neu-bg rounded-full flex items-center justify-center mx-auto mb-3 shadow-neu-pressed-sm">
+            <MapPin className="w-7 h-7 text-neu-text-muted" />
           </div>
-          <p className="text-gray-500 font-medium">No data found for this city. Try another search.</p>
+          <p className="text-neu-text-secondary font-medium">No data found for this city. Try another search.</p>
         </div>
       )}
 
@@ -252,53 +281,53 @@ export default function SatellitePage() {
               ))}
             </MapContainer>
           </div>
-          <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+          <div className="flex items-center gap-4 mt-3 text-xs text-neu-text-muted">
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-green-500 inline-block shadow-sm"></span> Low CO&#8322;
+              <span className="w-3 h-3 rounded-full bg-green-500 inline-block shadow-neu-raised-sm"></span> Low CO&#8322;
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-yellow-500 inline-block shadow-sm"></span> Moderate
+              <span className="w-3 h-3 rounded-full bg-yellow-500 inline-block shadow-neu-raised-sm"></span> Moderate
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-red-500 inline-block shadow-sm"></span> Critical
+              <span className="w-3 h-3 rounded-full bg-red-500 inline-block shadow-neu-raised-sm"></span> Critical
             </span>
-            <span className="ml-auto italic text-gray-400">
+            <span className="ml-auto italic text-neu-text-muted">
               {airData.source === "live" ? "Live data (WAQI)" : "Simulated data"}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
             <div className="card flex flex-col">
-              <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2 tracking-tight text-sm">
-                <div className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+              <h3 className="font-bold text-neu-text mb-3 flex items-center gap-2 tracking-tight text-sm">
+                <div className="w-7 h-7 bg-neu-bg rounded-full flex items-center justify-center flex-shrink-0 shadow-neu-pressed-sm">
                   <Wind className="w-3.5 h-3.5 text-blue-500" />
                 </div>
                 {airData.city} Air Summary
               </h3>
               <div className="space-y-2 flex-1">
-                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                  <span className="text-sm text-gray-600">Avg CO&#8322;</span>
+                <div className="flex items-center justify-between p-3 bg-neu-bg rounded-2xl shadow-neu-pressed-sm">
+                  <span className="text-sm text-neu-text-secondary">Avg CO&#8322;</span>
                   <span className={`text-lg font-bold tracking-tight ${getCO2Label(airData.avgCO2) === "Critical" ? "text-red-600" : getCO2Label(airData.avgCO2) === "Moderate" ? "text-yellow-600" : "text-green-600"}`}>
                     {airData.avgCO2} ppm
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                  <span className="text-sm text-gray-600">Avg AQI</span>
+                <div className="flex items-center justify-between p-3 bg-neu-bg rounded-2xl shadow-neu-pressed-sm">
+                  <span className="text-sm text-neu-text-secondary">Avg AQI</span>
                   <span className={`text-lg font-bold tracking-tight ${airData.avgAqi > 100 ? "text-red-600" : airData.avgAqi > 50 ? "text-yellow-600" : "text-green-600"}`}>
                     {airData.avgAqi}
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                  <span className="text-sm text-gray-600">Zones Monitored</span>
-                  <span className="text-lg font-bold text-gray-900 tracking-tight">{airData.zones.length}</span>
+                <div className="flex items-center justify-between p-3 bg-neu-bg rounded-2xl shadow-neu-pressed-sm">
+                  <span className="text-sm text-neu-text-secondary">Zones Monitored</span>
+                  <span className="text-lg font-bold text-neu-text tracking-tight">{airData.zones.length}</span>
                 </div>
               </div>
             </div>
 
             {criticalZones.length > 0 && (
-              <div className="card bg-red-50/80 border-red-200/60 flex flex-col">
+              <div className="card bg-neu-red-light/50 flex flex-col">
                 <h3 className="font-bold text-red-800 mb-2 flex items-center gap-2 text-sm tracking-tight">
-                  <div className="w-7 h-7 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-7 h-7 bg-neu-bg rounded-full flex items-center justify-center flex-shrink-0 shadow-neu-pressed-sm">
                     <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
                   </div>
                   Critical Zones Detected
@@ -313,7 +342,7 @@ export default function SatellitePage() {
                     </div>
                   ))}
                 </div>
-                <div className="bg-white rounded-xl p-3 border border-red-200/60 mt-auto">
+                <div className="bg-neu-bg rounded-2xl p-3 shadow-neu-pressed-sm mt-auto">
                   <p className="text-sm text-red-800 font-semibold">
                     Immediate tree plantation recommended in {criticalZones.length} zone{criticalZones.length > 1 ? "s" : ""}!
                   </p>
@@ -321,9 +350,9 @@ export default function SatellitePage() {
               </div>
             )}
 
-            <div className="card bg-green-50/80 border-green-200/60 flex flex-col">
+            <div className="card bg-neu-accent/10 flex flex-col">
               <h3 className="font-bold text-green-800 mb-2 flex items-center gap-2 text-sm tracking-tight">
-                <div className="w-7 h-7 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-7 h-7 bg-neu-bg rounded-full flex items-center justify-center flex-shrink-0 shadow-neu-pressed-sm">
                   <TreePine className="w-3.5 h-3.5 text-green-700" />
                 </div>
                 Planting Target
@@ -342,13 +371,13 @@ export default function SatellitePage() {
             </div>
 
             <div className="card flex flex-col">
-              <h3 className="font-bold text-gray-900 mb-2 text-sm tracking-tight">Zone Breakdown</h3>
+              <h3 className="font-bold text-neu-text mb-2 text-sm tracking-tight">Zone Breakdown</h3>
               <div className="space-y-1.5 flex-1 overflow-y-auto">
                 {airData.zones.map((z, i) => (
                   <div key={i} className="flex items-center gap-2 text-xs py-1">
-                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-sm" style={{ backgroundColor: getMarkerColor(z.status) }}></span>
-                    <span className="flex-1 text-gray-700 truncate font-medium">{z.name}</span>
-                    <span className="text-gray-500">{z.co2}</span>
+                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-neu-raised-sm" style={{ backgroundColor: getMarkerColor(z.status) }}></span>
+                    <span className="flex-1 text-neu-text-secondary truncate font-medium">{z.name}</span>
+                    <span className="text-neu-text-muted">{z.co2}</span>
                   </div>
                 ))}
               </div>

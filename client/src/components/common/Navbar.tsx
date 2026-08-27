@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { Leaf, LogOut, Menu, X, MessageCircle, Shield } from "lucide-react";
+import { Leaf, LogOut, Menu, X, MessageCircle, Shield, BookOpen } from "lucide-react";
 import { useState } from "react";
 
 export default function Navbar() {
@@ -27,31 +27,31 @@ export default function Navbar() {
   const isActive = (path: string) => location.pathname === path;
 
   const navLink = (path: string) =>
-    `relative block py-2 px-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+    `relative block py-2 px-3 text-sm font-medium rounded-xl transition-all duration-200 ${
       isActive(path)
-        ? "text-eco-primary bg-eco-light/60"
-        : "text-gray-500 hover:text-eco-primary hover:bg-gray-50"
+        ? "text-eco-primary shadow-neu-pressed-sm bg-neu-bg"
+        : "text-neu-text-secondary hover:text-eco-primary hover:shadow-neu-raised-sm"
     }`;
 
   const mobileNavLink = (path: string) =>
     `block py-2.5 px-3 text-sm font-medium rounded-xl transition-all duration-200 ${
       isActive(path)
-        ? "text-eco-primary bg-eco-light/60"
-        : "text-gray-600 hover:text-eco-primary hover:bg-gray-50"
+        ? "text-eco-primary shadow-neu-pressed-sm bg-neu-bg"
+        : "text-neu-text-secondary hover:text-eco-primary hover:shadow-neu-raised-sm"
     }`;
 
   return (
-    <nav className="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-50 shadow-nav">
+    <nav className="bg-neu-bg shadow-nav sticky top-0 z-50">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link
             to="/"
             className="flex items-center gap-2.5 text-eco-primary font-bold text-xl tracking-tight group"
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-eco-primary to-emerald-400 rounded-lg flex items-center justify-center shadow-glow-green group-hover:shadow-glow-green-lg transition-shadow duration-300">
-              <Leaf className="w-4.5 h-4.5 text-white" />
+            <div className="w-8 h-8 bg-neu-bg rounded-full flex items-center justify-center shadow-neu-raised-sm group-hover:shadow-neu-hover transition-shadow duration-300">
+              <Leaf className="w-4.5 h-4.5 text-eco-primary" />
             </div>
-            <span>GreenVerse</span>
+            <span>Smart & Green City Platform</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-1">
@@ -66,6 +66,10 @@ export default function Navbar() {
                 <Link to="/recycle" className={navLink("/recycle")}>
                   Recycle
                 </Link>
+                <Link to="/knowledge" className={navLink("/knowledge")}>
+                  <BookOpen className="w-4 h-4 inline mr-1 -mt-0.5" />
+                  Knowledge
+                </Link>
                 <Link to="/marketplace" className={navLink("/marketplace")}>
                   Marketplace
                 </Link>
@@ -79,15 +83,15 @@ export default function Navbar() {
                     Admin
                   </Link>
                 )}
-                <div className="ml-3 pl-3 border-l border-gray-200 flex items-center gap-3">
+                <div className="ml-3 pl-3 border-l border-neu-shadow-dark/30 flex items-center gap-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 bg-gradient-to-br from-eco-primary to-emerald-400 rounded-full flex items-center justify-center text-white text-[11px] font-bold shadow-sm">
+                    <div className="w-7 h-7 bg-neu-bg rounded-full flex items-center justify-center text-eco-primary text-[11px] font-bold shadow-neu-raised-sm">
                       {user?.name?.charAt(0)?.toUpperCase() || "U"}
                     </div>
-                    <span className="text-sm text-gray-600 font-medium">
+                    <span className="text-sm text-neu-text-secondary font-medium">
                       {user?.name}
                       {user?.role === "admin" && (
-                        <span className="ml-1.5 text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded-full font-semibold border border-red-100">
+                        <span className="ml-1.5 text-[10px] bg-neu-red-light text-neu-red px-2 py-0.5 rounded-xl font-semibold shadow-neu-pressed-sm">
                           Admin
                         </span>
                       )}
@@ -95,7 +99,7 @@ export default function Navbar() {
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200"
+                    className="p-2 text-neu-text-muted hover:text-neu-red hover:shadow-neu-pressed-sm rounded-xl transition-all duration-200"
                   >
                     <LogOut className="w-4 h-4" />
                   </button>
@@ -103,7 +107,7 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <button onClick={scrollToFeatures} className="text-sm font-medium text-gray-500 hover:text-eco-primary px-3 py-2 rounded-lg transition-colors duration-200">
+                <button onClick={scrollToFeatures} className="text-sm font-medium text-neu-text-secondary hover:text-eco-primary px-3 py-2 rounded-xl transition-colors duration-200 hover:shadow-neu-raised-sm">
                   Features
                 </button>
                 <Link to="/satellite" className={navLink("/satellite")}>
@@ -118,8 +122,12 @@ export default function Navbar() {
                 <Link to="/recycle" className={navLink("/recycle")}>
                   Recycle
                 </Link>
-                <div className="ml-3 pl-3 border-l border-gray-200 flex items-center gap-2">
-                  <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg transition-colors duration-200">
+                <Link to="/knowledge" className={navLink("/knowledge")}>
+                  <BookOpen className="w-4 h-4 inline mr-1 -mt-0.5" />
+                  Knowledge
+                </Link>
+                <div className="ml-3 pl-3 border-l border-neu-shadow-dark/30 flex items-center gap-2">
+                  <Link to="/login" className="text-sm font-medium text-neu-text-secondary hover:text-neu-text px-3 py-2 rounded-xl transition-colors duration-200 hover:shadow-neu-raised-sm">
                     Log in
                   </Link>
                   <Link to="/register" className="btn-primary text-sm !py-2 !px-5">
@@ -132,7 +140,7 @@ export default function Navbar() {
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
+            className="md:hidden p-2 text-neu-text-secondary hover:text-neu-text hover:shadow-neu-pressed-sm rounded-xl transition-all duration-200"
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -140,18 +148,18 @@ export default function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-gray-100 px-4 py-3 animate-fade-in-down shadow-lg">
+        <div className="md:hidden bg-neu-bg shadow-neu-raised-lg mx-4 mb-4 rounded-2xl px-4 py-3 animate-fade-in-down">
           {isAuthenticated ? (
             <div className="space-y-1">
               <div className="px-3 py-2 mb-2">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-eco-primary to-emerald-400 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                  <div className="w-8 h-8 bg-neu-bg rounded-full flex items-center justify-center text-eco-primary text-xs font-bold shadow-neu-raised-sm">
                     {user?.name?.charAt(0)?.toUpperCase() || "U"}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">{user?.name}</p>
+                    <p className="text-sm font-semibold text-neu-text">{user?.name}</p>
                     {user?.role === "admin" && (
-                      <span className="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded-full font-semibold border border-red-100">
+                      <span className="text-[10px] bg-neu-red-light text-neu-red px-2 py-0.5 rounded-xl font-semibold shadow-neu-pressed-sm">
                         Admin
                       </span>
                     )}
@@ -167,6 +175,9 @@ export default function Navbar() {
               <Link to="/recycle" className={mobileNavLink("/recycle")} onClick={() => setMobileOpen(false)}>
                 Recycle
               </Link>
+              <Link to="/knowledge" className={mobileNavLink("/knowledge")} onClick={() => setMobileOpen(false)}>
+                Knowledge
+              </Link>
               <Link to="/marketplace" className={mobileNavLink("/marketplace")} onClick={() => setMobileOpen(false)}>
                 Marketplace
               </Link>
@@ -178,15 +189,15 @@ export default function Navbar() {
                   Admin
                 </Link>
               )}
-              <div className="pt-2 mt-2 border-t border-gray-100">
-                <button onClick={handleLogout} className="w-full text-left py-2.5 px-3 text-sm font-medium text-red-500 hover:bg-red-50 rounded-xl transition-all duration-200">
+              <div className="pt-2 mt-2 border-t border-neu-shadow-dark/20">
+                <button onClick={handleLogout} className="w-full text-left py-2.5 px-3 text-sm font-medium text-neu-red hover:shadow-neu-pressed-sm rounded-xl transition-all duration-200">
                   Logout
                 </button>
               </div>
             </div>
           ) : (
             <div className="space-y-1">
-              <button onClick={scrollToFeatures} className="block w-full text-left py-2.5 px-3 text-sm font-medium text-gray-600 hover:text-eco-primary hover:bg-gray-50 rounded-xl transition-all duration-200">
+              <button onClick={scrollToFeatures} className="block w-full text-left py-2.5 px-3 text-sm font-medium text-neu-text-secondary hover:text-eco-primary hover:shadow-neu-raised-sm rounded-xl transition-all duration-200">
                 Features
               </button>
               <Link to="/satellite" className={mobileNavLink("/satellite")} onClick={() => setMobileOpen(false)}>
@@ -201,7 +212,10 @@ export default function Navbar() {
               <Link to="/recycle" className={mobileNavLink("/recycle")} onClick={() => setMobileOpen(false)}>
                 Recycle
               </Link>
-              <div className="pt-2 mt-2 border-t border-gray-100 flex flex-col gap-2">
+              <Link to="/knowledge" className={mobileNavLink("/knowledge")} onClick={() => setMobileOpen(false)}>
+                Knowledge
+              </Link>
+              <div className="pt-2 mt-2 border-t border-neu-shadow-dark/20 flex flex-col gap-2">
                 <Link to="/login" className={mobileNavLink("/login")} onClick={() => setMobileOpen(false)}>
                   Log in
                 </Link>

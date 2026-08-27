@@ -12,6 +12,9 @@ router.put("/users/:id/role", adminController.updateUserRole);
 router.post("/create-admin", adminController.createAdmin);
 router.get("/listings", adminController.getListings);
 router.delete("/listings/:id", adminController.deleteListing);
+router.get("/posts", adminController.getPosts);
+router.delete("/posts/:id", adminController.deletePost);
+router.put("/posts/:id/campaign-status", adminController.updateCampaignStatus);
 router.get("/stats", adminController.getStats);
 
 

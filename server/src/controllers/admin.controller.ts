@@ -2,6 +2,7 @@ import { Response } from "express";
 import { IAuthRequest } from "../types/index.js";
 import User from "../models/User.js";
 import Marketplace from "../models/Marketplace.js";
+import Post from "../models/Post.js";
 
 export const getUsers = async (
   req: IAuthRequest,
@@ -204,5 +205,89 @@ export const getStats = async (
     });
   } catch {
     res.status(500).json({ error: "Failed to fetch stats" });
+  }
+};
+
+export const getPosts = async (
+  req: IAuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 20;
+    const skip = (page - 1) * limit;
+    const { type } = req.query;
+
+    const filter: any = {};
+    if (type === "campaign") {
+      filter.campaignStatus = { $exists: true, $ne: null };
+    } else if (type === "regular") {
+      filter.campaignStatus = { $exists: false };
+    }
+
+    const [posts, total] = await Promise.all([
+      Post.find(filter)
+        .populate("userId", "name email")
+        .populate("volunteers", "name")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Post.countDocuments(filter),
+    ]);
+
+    res.json({
+      posts,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
+  } catch {
+    res.status(500).json({ error: "Failed to fetch posts" });
+  }
+};
+
+export const deletePost = async (
+  req: IAuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const post = await Post.findByIdAndDelete(req.params.id);
+    if (!post) {
+      res.status(404).json({ error: "Post not found" });
+      return;
+    }
+    res.json({ message: "Post deleted" });
+  } catch {
+    res.status(500).json({ error: "Failed to delete post" });
+  }
+};
+
+export const updateCampaignStatus = async (
+  req: IAuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { status } = req.body;
+    if (!["proposed", "started", "completed", "ended"].includes(status)) {
+      res.status(400).json({ error: "Invalid campaign status" });
+      return;
+    }
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      res.status(404).json({ error: "Post not found" });
+      return;
+    }
+    if (!post.campaignStatus) {
+      res.status(400).json({ error: "This post is not a campaign" });
+      return;
+    }
+    post.campaignStatus = status;
+    await post.save();
+    const populated = await Post.findById(post._id)
+      .populate("userId", "name email")
+      .populate("volunteers", "name");
+    res.json(populated);
+  } catch {
+    res.status(500).json({ error: "Failed to update campaign status" });
   }
 };

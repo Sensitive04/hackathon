@@ -118,26 +118,26 @@ export default function MessagesPage() {
     <div className="page-container">
       <div className="page-header">
         <div className="page-header-row">
-          <div className="page-header-icon bg-gradient-to-br from-blue-600 to-indigo-600 shadow-sm">
-            <MessageCircle className="w-5 h-5 text-white" />
+          <div className="page-header-icon">
+            <MessageCircle className="w-5 h-5 text-indigo-500" />
           </div>
           <h1 className="page-header-title">Messages</h1>
         </div>
       </div>
 
-      <div className="card !p-0 overflow-hidden shadow-float" style={{ height: "600px" }}>
+      <div className="card !p-0 overflow-hidden shadow-neu-raised-lg" style={{ height: "600px" }}>
         <div className="flex h-full">
           <div
-            className={`w-80 border-r border-slate-100 flex flex-col ${
+            className={`w-80 border-r border-neu-shadow-dark/15 flex flex-col ${
               activeId ? "hidden md:flex" : "flex"
             }`}
           >
-            <div className="p-4 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50/50">
-              <h2 className="font-bold text-gray-900 text-sm tracking-tight">Conversations</h2>
+            <div className="p-4 border-b border-neu-shadow-dark/15 bg-neu-bg">
+              <h2 className="font-bold text-neu-text text-sm tracking-tight">Conversations</h2>
             </div>
             <div className="flex-1 overflow-y-auto">
               {conversations.length === 0 && (
-                <p className="text-gray-400 text-sm text-center py-8 font-medium">
+                <p className="text-neu-text-muted text-sm text-center py-8 font-medium">
                   No conversations yet
                 </p>
               )}
@@ -145,23 +145,23 @@ export default function MessagesPage() {
                 <button
                   key={c.id}
                   onClick={() => setActiveId(c.id)}
-                  className={`w-full text-left px-4 py-3.5 border-b border-slate-50 transition-all duration-200 ${
+                  className={`w-full text-left px-4 py-3.5 border-b border-neu-shadow-dark/10 transition-all duration-200 ${
                     activeId === c.id
-                      ? "bg-eco-light/50 border-l-2 border-l-eco-primary"
-                      : "hover:bg-gray-50 border-l-2 border-l-transparent"
+                      ? "bg-neu-accent/10 border-l-2 border-l-eco-primary shadow-neu-pressed-sm"
+                      : "hover:bg-neu-bg border-l-2 border-l-transparent"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-gradient-to-br from-eco-primary to-emerald-400 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-sm">
+                    <div className="w-9 h-9 bg-neu-bg rounded-full flex items-center justify-center text-eco-primary text-sm font-bold flex-shrink-0 shadow-neu-raised-sm">
                       {c.otherUser?.name?.charAt(0) || "?"}
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-sm truncate text-gray-900">
+                        <span className="font-semibold text-sm truncate text-neu-text">
                           {c.otherUser?.name}
                         </span>
                         {c.listing && (
-                          <Package className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                          <Package className="w-3 h-3 text-neu-text-muted flex-shrink-0" />
                         )}
                       </div>
                       {c.listing && (
@@ -169,7 +169,7 @@ export default function MessagesPage() {
                           Re: {c.listing.title}
                         </p>
                       )}
-                      <p className="text-xs text-gray-400 truncate mt-0.5">
+                      <p className="text-xs text-neu-text-muted truncate mt-0.5">
                         {c.lastMessage || "No messages yet"}
                       </p>
                     </div>
@@ -186,22 +186,22 @@ export default function MessagesPage() {
           >
             {activeId && activeConvo ? (
               <>
-                <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-3 bg-gradient-to-r from-white to-slate-50/50">
+                <div className="px-4 py-3 border-b border-neu-shadow-dark/15 flex items-center gap-3 bg-neu-bg">
                   <button
                     onClick={() => setActiveId(null)}
-                    className="md:hidden p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                    className="md:hidden p-1.5 text-neu-text-secondary hover:text-neu-text hover:shadow-neu-pressed-sm rounded-xl transition-all duration-200"
                   >
                     <ArrowLeft className="w-5 h-5" />
                   </button>
-                  <div className="w-8 h-8 bg-gradient-to-br from-eco-primary to-emerald-400 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                  <div className="w-8 h-8 bg-neu-bg rounded-full flex items-center justify-center text-eco-primary text-sm font-bold shadow-neu-raised-sm">
                     {activeConvo.otherUser?.name?.charAt(0) || "?"}
                   </div>
                   <div>
-                    <p className="font-semibold text-sm text-gray-900 tracking-tight">
+                    <p className="font-semibold text-sm text-neu-text tracking-tight">
                       {activeConvo.otherUser?.name}
                     </p>
                     {activeConvo.listing && (
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-neu-text-muted">
                         {activeConvo.listing.title}
                       </p>
                     )}
@@ -209,7 +209,7 @@ export default function MessagesPage() {
                 </div>
 
                 {isSellerOfPendingSale && activeConvo?.listing && (
-                  <div className="mx-4 mt-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between gap-3">
+                  <div className="mx-4 mt-3 px-4 py-3 bg-neu-amber-light rounded-2xl shadow-neu-pressed-sm flex items-center justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-amber-800">
                         Sale Pending
@@ -229,7 +229,7 @@ export default function MessagesPage() {
                     <button
                       onClick={() => handleCancelSale(activeConvo.listing!._id)}
                       disabled={confirming}
-                      className="text-xs !py-1.5 !px-3 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-gray-800 flex items-center gap-1.5 transition-all duration-200"
+                      className="text-xs !py-1.5 !px-3 rounded-xl bg-neu-bg text-neu-text-secondary hover:shadow-neu-hover flex items-center gap-1.5 transition-all duration-200 shadow-neu-raised-sm"
                     >
                       <X className="w-3.5 h-3.5" />
                       {confirming ? "Cancelling..." : "Cancel"}
@@ -237,7 +237,7 @@ export default function MessagesPage() {
                   </div>
                 )}
 
-                <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-gray-50/30">
+                <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-neu-bg/50">
                   {messages.map((msg) => {
                     const isMine = msg.senderId._id === user?.id;
                     return (
@@ -248,14 +248,14 @@ export default function MessagesPage() {
                         <div
                           className={`max-w-xs px-4 py-2.5 rounded-2xl text-sm ${
                             isMine
-                              ? "bg-gradient-to-br from-eco-primary to-emerald-600 text-white rounded-br-md shadow-sm"
-                              : "bg-white text-gray-900 rounded-bl-md border border-gray-100 shadow-sm"
+                              ? "bg-eco-primary text-white rounded-br-md shadow-neu-raised-sm"
+                              : "bg-neu-bg text-neu-text rounded-bl-md shadow-neu-raised-sm"
                           }`}
                         >
                           <p className="leading-relaxed">{msg.content}</p>
                           <p
                             className={`text-xs mt-1 ${
-                              isMine ? "text-green-100" : "text-gray-400"
+                              isMine ? "text-green-100" : "text-neu-text-muted"
                             }`}
                           >
                             {new Date(msg.createdAt).toLocaleTimeString([], {
@@ -272,7 +272,7 @@ export default function MessagesPage() {
 
                 <form
                   onSubmit={handleSend}
-                  className="px-4 py-3 border-t border-slate-100 flex gap-2 bg-white"
+                  className="px-4 py-3 border-t border-neu-shadow-dark/15 flex gap-2 bg-neu-bg"
                 >
                   <input
                     type="text"
@@ -284,17 +284,17 @@ export default function MessagesPage() {
                   <button
                     type="submit"
                     disabled={loading || !newMessage.trim()}
-                    className="btn-primary !px-4 !shadow-sm"
+                    className="btn-primary !px-4 !shadow-neu-raised-sm"
                   >
                     <Send className="w-4 h-4" />
                   </button>
                 </form>
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center text-gray-400 bg-gray-50/30">
+              <div className="flex-1 flex items-center justify-center text-neu-text-muted bg-neu-bg/50">
                 <div className="text-center">
-                  <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <MessageCircle className="w-7 h-7 text-gray-300" />
+                  <div className="w-14 h-14 bg-neu-bg rounded-full flex items-center justify-center mx-auto mb-3 shadow-neu-pressed">
+                    <MessageCircle className="w-7 h-7 text-neu-text-muted" />
                   </div>
                   <p className="font-medium text-sm">Select a conversation to start chatting</p>
                 </div>

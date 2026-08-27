@@ -16,6 +16,7 @@ import marketplaceRoutes from "./routes/marketplace.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import postRoutes from "./routes/post.routes.js";
+import knowledgeRoutes from "./routes/knowledge.routes.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -122,13 +123,14 @@ app.use("/api/marketplace", marketplaceRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/knowledge", knowledgeRoutes);
 
 app.use(errorHandler);
 
 async function start() {
   await connectDB();
   httpServer.listen(PORT, () => {
-    console.log(`GreenVerse server running on port ${PORT}`);
+    console.log(`Smart & Green City server running on port ${PORT}`);
   });
 }
 

@@ -187,37 +187,37 @@ export default function ChatPanel({
 
   return (
     <div
-      className="bg-white rounded-2xl shadow-card border border-slate-100 overflow-hidden flex flex-col animate-scale-in"
+      className="bg-neu-bg rounded-3xl shadow-neu-raised overflow-hidden flex flex-col animate-scale-in"
       style={{ height: "480px" }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-gray-50">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-neu-shadow-dark/15 bg-neu-bg">
         <div className="min-w-0 flex-1">
-          <h3 className="font-bold text-sm text-gray-900 truncate tracking-tight">
+          <h3 className="font-bold text-sm text-neu-text truncate tracking-tight">
             {activeConv?.title || "Campaign Chat"}
           </h3>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-neu-text-muted mt-0.5">
             {activeConv?.participants.length || 0} members
             {activeConv && (() => {
               const onlineCount = activeConv.participants.filter((p) =>
                 isUserOnline(p._id)
               ).length;
               return onlineCount > 0 ? (
-                <span className="ml-2 text-emerald-600 font-medium">{onlineCount} online</span>
+                <span className="ml-2 text-eco-primary font-medium">{onlineCount} online</span>
               ) : null;
             })()}
             {isEnded && (
-              <span className="ml-2 text-red-500 font-semibold">Ended</span>
+              <span className="ml-2 text-neu-red font-semibold">Ended</span>
             )}
             {totalUnread > 0 && (
-              <span className="ml-2 text-red-500 font-semibold">{totalUnread} unread</span>
+              <span className="ml-2 text-neu-red font-semibold">{totalUnread} unread</span>
             )}
           </p>
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={() => setShowMembers(!showMembers)}
-            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+            className="p-1.5 text-neu-text-muted hover:text-neu-text hover:shadow-neu-pressed-sm rounded-xl transition-all duration-200"
           >
             {showMembers ? (
               <ChevronUp className="w-4 h-4" />
@@ -230,24 +230,24 @@ export default function ChatPanel({
 
       {/* Member list */}
       {showMembers && activeConv && (
-        <div className="border-b border-slate-100 bg-gray-50 px-4 py-2.5 max-h-40 overflow-y-auto animate-fade-in-down">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
+        <div className="border-b border-neu-shadow-dark/15 bg-neu-bg px-4 py-2.5 max-h-40 overflow-y-auto animate-fade-in-down shadow-neu-pressed-sm">
+          <p className="text-[10px] font-bold text-neu-text-muted uppercase tracking-wider mb-1.5">
             Members ({activeConv.participants.length})
           </p>
           {activeConv.participants.map((p) => (
             <div key={p._id} className="flex items-center gap-2.5 py-1.5">
               <span className="relative flex-shrink-0">
-                <span className="w-6 h-6 bg-gradient-to-br from-eco-primary/80 to-emerald-400 rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+                <span className="w-6 h-6 bg-neu-bg rounded-full flex items-center justify-center text-eco-primary text-[10px] font-bold shadow-neu-raised-sm">
                   {p.name?.charAt(0)?.toUpperCase() || "?"}
                 </span>
                 {isUserOnline(p._id) && (
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white shadow-sm" />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-eco-primary rounded-full border-2 border-neu-bg shadow-sm" />
                 )}
               </span>
-              <span className="text-xs text-gray-700 font-medium">
+              <span className="text-xs text-neu-text font-medium">
                 {p.name}
                 {p._id === currentUserId && (
-                  <span className="text-gray-400 ml-1 font-normal">(you)</span>
+                  <span className="text-neu-text-muted ml-1 font-normal">(you)</span>
                 )}
               </span>
             </div>
@@ -256,12 +256,12 @@ export default function ChatPanel({
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2.5 bg-gray-50/50">
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2.5 bg-neu-bg/50">
         {loading && (
-          <p className="text-xs text-gray-400 text-center py-4">Loading messages...</p>
+          <p className="text-xs text-neu-text-muted text-center py-4">Loading messages...</p>
         )}
         {!loading && messages.length === 0 && (
-          <p className="text-xs text-gray-400 text-center py-4">
+          <p className="text-xs text-neu-text-muted text-center py-4">
             No messages yet. Say hello!
           </p>
         )}
@@ -269,7 +269,7 @@ export default function ChatPanel({
           if (msg.isSystem) {
             return (
               <div key={msg._id} className="flex justify-center my-2">
-                <div className="flex items-center gap-1.5 text-[11px] text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full border border-slate-200/60 shadow-sm">
+                <div className="flex items-center gap-1.5 text-[11px] text-neu-text-muted bg-neu-bg px-3 py-1.5 rounded-full shadow-neu-pressed-sm">
                   <Info className="w-3 h-3" />
                   <span className="italic">{msg.content}</span>
                 </div>
@@ -286,19 +286,19 @@ export default function ChatPanel({
               <div
                 className={`max-w-[80%] px-3.5 py-2.5 rounded-2xl text-sm ${
                   isMine
-                    ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-br-md shadow-sm"
-                    : "bg-white text-gray-800 rounded-bl-md border border-slate-200/60 shadow-sm"
+                    ? "bg-eco-primary text-white rounded-br-md shadow-neu-raised-sm"
+                    : "bg-neu-bg text-neu-text rounded-bl-md shadow-neu-raised-sm"
                 }`}
               >
                 {!isMine && (
-                  <p className="text-[10px] font-semibold text-gray-500 mb-0.5">
+                  <p className="text-[10px] font-semibold text-neu-text-secondary mb-0.5">
                     {msg.senderId.name}
                   </p>
                 )}
                 <p className="leading-relaxed">{msg.content}</p>
                 <p
                   className={`text-[10px] mt-1 ${
-                    isMine ? "text-emerald-100" : "text-gray-400"
+                    isMine ? "text-green-100" : "text-neu-text-muted"
                   }`}
                 >
                   {new Date(msg.createdAt).toLocaleTimeString([], {
@@ -315,7 +315,7 @@ export default function ChatPanel({
 
       {/* Typing indicator */}
       {activeTyping && !isEnded && (
-        <div className="px-3 py-1.5 text-xs text-gray-500 italic bg-gray-50 border-t border-slate-100">
+        <div className="px-3 py-1.5 text-xs text-neu-text-muted italic bg-neu-bg border-t border-neu-shadow-dark/15">
           {typingUsers[activeId!].size === 1
             ? "Someone is typing"
             : `${typingUsers[activeId!].size} people are typing`}
@@ -325,17 +325,17 @@ export default function ChatPanel({
 
       {/* Ended banner */}
       {isEnded && (
-        <div className="px-3 py-2.5 text-xs text-center text-gray-500 bg-gray-50 border-t border-slate-100 font-medium">
+        <div className="px-3 py-2.5 text-xs text-center text-neu-text-muted bg-neu-bg border-t border-neu-shadow-dark/15 font-medium">
           This campaign has ended. Messaging is disabled.
         </div>
       )}
 
       {/* Input */}
       {activeId && !isEnded && (
-        <form onSubmit={handleSend} className="flex gap-2 px-3 py-2.5 border-t border-slate-100 bg-white">
+        <form onSubmit={handleSend} className="flex gap-2 px-3 py-2.5 border-t border-neu-shadow-dark/15 bg-neu-bg">
           <input
             type="text"
-            className="flex-1 text-sm !py-2.5 px-4 rounded-xl border border-slate-200/60 bg-gray-50 text-gray-900 placeholder:text-gray-400 transition-all duration-200 focus:border-eco-primary focus:ring-2 focus:ring-eco-primary/20 focus:outline-none"
+            className="flex-1 text-sm !py-2.5 px-4 rounded-2xl bg-neu-bg text-neu-text placeholder:text-neu-text-muted transition-all duration-200 shadow-neu-pressed-sm focus:shadow-neu-pressed focus:ring-2 focus:ring-eco-primary/30 focus:outline-none"
             placeholder="Type a message..."
             value={input}
             onChange={handleInputChange}
@@ -343,7 +343,7 @@ export default function ChatPanel({
           <button
             type="submit"
             disabled={!input.trim()}
-            className="btn-primary !rounded-full !p-2.5 !shadow-sm disabled:!shadow-none"
+            className="btn-primary !rounded-full !p-2.5 !shadow-neu-raised-sm disabled:!shadow-neu-flat"
           >
             <Send className="w-4 h-4" />
           </button>

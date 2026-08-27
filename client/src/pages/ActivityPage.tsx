@@ -177,8 +177,8 @@ export default function ActivityPage() {
     <div className="page-container">
       <div className="page-header">
         <div className="page-header-row">
-          <div className="page-header-icon bg-gradient-to-br from-amber-500 to-orange-500 shadow-sm">
-            <ClipboardList className="w-5 h-5 text-white" />
+          <div className="page-header-icon">
+            <ClipboardList className="w-5 h-5 text-amber-500" />
           </div>
           <h1 className="page-header-title">Activity</h1>
         </div>
@@ -190,15 +190,15 @@ export default function ActivityPage() {
         <div ref={feedRef}>
           {/* Feed tabs */}
           <div className="flex flex-wrap items-center gap-2 mb-4">
-            <div className="flex bg-white rounded-xl p-1 border border-slate-200/60 shadow-sm">
+            <div className="flex bg-neu-bg rounded-2xl p-1 shadow-neu-pressed-sm">
               {feedTabs.map((t) => (
                 <button
                   key={t.key}
                   onClick={() => setFeedType(t.key)}
-                  className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-all duration-200 ${
+                  className={`px-3 py-1.5 text-sm rounded-xl font-medium transition-all duration-200 ${
                     feedType === t.key
-                      ? "bg-eco-primary text-white shadow-sm"
-                      : "text-gray-500 hover:text-eco-primary hover:bg-gray-50"
+                      ? "bg-eco-primary text-white shadow-neu-raised-sm"
+                      : "text-neu-text-secondary hover:text-eco-primary"
                   }`}
                 >
                   {t.label}
@@ -206,7 +206,7 @@ export default function ActivityPage() {
               ))}
             </div>
             <div className="relative flex-1 min-w-[180px]">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">#</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neu-text-muted text-sm font-medium">#</span>
               <input
                 value={searchTag}
                 onChange={(e) => setSearchTag(e.target.value)}
@@ -217,7 +217,7 @@ export default function ActivityPage() {
                   }
                 }}
                 placeholder="Search hashtags (press Enter)"
-                className="w-full !py-2 pl-7 text-sm bg-white border border-slate-200/60 rounded-xl text-gray-900 placeholder:text-gray-400 focus:border-eco-primary focus:ring-2 focus:ring-eco-primary/20 focus:outline-none transition-all duration-200"
+                className="w-full !py-2 pl-7 text-sm bg-neu-bg rounded-2xl text-neu-text placeholder:text-neu-text-muted shadow-neu-pressed-sm focus:shadow-neu-pressed focus:ring-2 focus:ring-eco-primary/30 focus:outline-none transition-all duration-200"
               />
             </div>
           </div>
@@ -231,10 +231,10 @@ export default function ActivityPage() {
 
           {posts.length === 0 && !loading ? (
             <div className="card text-center py-16">
-              <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                <ClipboardList className="w-7 h-7 text-gray-400" />
+              <div className="w-14 h-14 bg-neu-bg rounded-full flex items-center justify-center mx-auto mb-3 shadow-neu-pressed-sm">
+                <ClipboardList className="w-7 h-7 text-neu-text-muted" />
               </div>
-              <p className="text-gray-500 font-medium">
+              <p className="text-neu-text-secondary font-medium">
                 {feedType === "my-campaigns"
                   ? "You haven't created any campaigns yet."
                   : feedType === "ended"
@@ -265,7 +265,7 @@ export default function ActivityPage() {
           )}
 
           {hasMore && (
-            <button onClick={loadMore} disabled={loading} className="w-full mt-2 card text-gray-700 font-semibold py-2.5 px-6 transition-all duration-200 hover:shadow-card active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed">
+            <button onClick={loadMore} disabled={loading} className="w-full mt-2 card text-neu-text-secondary font-semibold py-2.5 px-6 transition-all duration-200 hover:shadow-neu-hover active:shadow-neu-pressed active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed">
               {loading ? "Loading..." : "Load more"}
             </button>
           )}
@@ -278,7 +278,7 @@ export default function ActivityPage() {
               <div>
                 {activeChats.length > 0 && (
                   <>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 px-1">
+                    <p className="text-[10px] font-bold text-neu-text-muted uppercase tracking-widest mb-1.5 px-1">
                       Active Chats
                     </p>
                     <div className="space-y-1 mb-3">
@@ -286,15 +286,15 @@ export default function ActivityPage() {
                         <button
                           key={c._id}
                           onClick={() => setActiveCampaignId(c._id)}
-                          className={`w-full text-left text-xs px-3 py-2.5 rounded-xl transition-all duration-200 flex items-center justify-between font-medium ${
+                          className={`w-full text-left text-xs px-3 py-2.5 rounded-2xl transition-all duration-200 flex items-center justify-between font-medium ${
                             activeCampaignId === c._id
-                              ? "bg-emerald-500 text-white shadow-sm"
-                              : "bg-white text-gray-700 hover:bg-gray-50 border border-slate-200/60 shadow-card"
+                              ? "bg-eco-primary text-white shadow-neu-pressed-sm"
+                              : "bg-neu-bg text-neu-text shadow-neu-raised-sm hover:shadow-neu-hover"
                           }`}
                         >
                           <span className="truncate">{c.title || "Campaign"}</span>
                           {unread[c._id] > 0 && (
-                            <span className="ml-2 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0 font-bold">
+                            <span className="ml-2 bg-neu-red text-white text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0 font-bold shadow-neu-raised-sm">
                               {unread[c._id]}
                             </span>
                           )}
@@ -306,7 +306,7 @@ export default function ActivityPage() {
 
                 {endedChats.length > 0 && (
                   <>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 px-1 flex items-center gap-1">
+                    <p className="text-[10px] font-bold text-neu-text-muted uppercase tracking-widest mb-1.5 px-1 flex items-center gap-1">
                       <Archive className="w-3 h-3" />
                       Ended
                     </p>
@@ -315,10 +315,10 @@ export default function ActivityPage() {
                         <button
                           key={c._id}
                           onClick={() => setActiveCampaignId(c._id)}
-                          className={`w-full text-left text-xs px-3 py-2.5 rounded-xl transition-all duration-200 font-medium ${
+                          className={`w-full text-left text-xs px-3 py-2.5 rounded-2xl transition-all duration-200 font-medium ${
                             activeCampaignId === c._id
-                              ? "bg-gray-500 text-white shadow-sm"
-                              : "bg-white text-gray-500 hover:bg-gray-50 border border-slate-200/60 shadow-card"
+                              ? "bg-neu-text-muted text-white shadow-neu-pressed-sm"
+                              : "bg-neu-bg text-neu-text-muted shadow-neu-raised-sm hover:shadow-neu-hover"
                           }`}
                         >
                           <span className="truncate">{c.title || "Campaign"}</span>
@@ -346,10 +346,10 @@ export default function ActivityPage() {
               </div>
             ) : (
               <div className="card p-6 text-center">
-                <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <MessageCircle className="w-6 h-6 text-gray-400" />
+                <div className="w-12 h-12 bg-neu-bg rounded-full flex items-center justify-center mx-auto mb-2 shadow-neu-pressed-sm">
+                  <MessageCircle className="w-6 h-6 text-neu-text-muted" />
                 </div>
-                <p className="text-xs text-gray-500 font-medium">
+                <p className="text-xs text-neu-text-secondary font-medium">
                   No campaign chats yet. Start or join a campaign to chat!
                 </p>
               </div>
@@ -362,11 +362,11 @@ export default function ActivityPage() {
       {!showChat && (activeChats.length > 0 || endedChats.length > 0) && (
         <button
           onClick={() => setShowChat(true)}
-          className="lg:hidden fixed bottom-6 right-6 z-40 btn-primary !rounded-full !p-4 shadow-float relative active:scale-90"
+          className="lg:hidden fixed bottom-6 right-6 z-40 btn-primary !rounded-full !p-4 shadow-neu-raised-lg relative active:scale-90"
         >
           <MessageCircle className="w-6 h-6" />
           {totalUnread > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[11px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1 shadow-sm">
+            <span className="absolute -top-1 -right-1 bg-neu-red text-white text-[11px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1 shadow-neu-raised-sm">
               {totalUnread}
             </span>
           )}
@@ -382,15 +382,15 @@ export default function ActivityPage() {
                   <button
                     key={c._id}
                     onClick={() => setActiveCampaignId(c._id)}
-                    className={`w-full text-left text-xs px-3 py-2.5 rounded-xl transition-all duration-200 flex items-center justify-between font-medium ${
+                    className={`w-full text-left text-xs px-3 py-2.5 rounded-2xl transition-all duration-200 flex items-center justify-between font-medium ${
                       activeCampaignId === c._id
-                        ? "bg-emerald-500 text-white shadow-sm"
-                        : "bg-white text-gray-700 border border-slate-200/60 shadow-card"
+                        ? "bg-eco-primary text-white shadow-neu-pressed-sm"
+                        : "bg-neu-bg text-neu-text shadow-neu-raised-sm"
                     }`}
                   >
                     <span className="truncate">{c.title || "Campaign"}</span>
                     {unread[c._id] > 0 && (
-                      <span className="ml-2 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0 font-bold">
+                      <span className="ml-2 bg-neu-red text-white text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0 font-bold">
                         {unread[c._id]}
                       </span>
                     )}
@@ -400,10 +400,10 @@ export default function ActivityPage() {
                   <button
                     key={c._id}
                     onClick={() => setActiveCampaignId(c._id)}
-                    className={`w-full text-left text-xs px-3 py-2.5 rounded-xl transition-all duration-200 font-medium ${
+                    className={`w-full text-left text-xs px-3 py-2.5 rounded-2xl transition-all duration-200 font-medium ${
                       activeCampaignId === c._id
-                        ? "bg-gray-500 text-white shadow-sm"
-                        : "bg-white text-gray-500 border border-slate-200/60 shadow-card"
+                        ? "bg-neu-text-muted text-white shadow-neu-pressed-sm"
+                        : "bg-neu-bg text-neu-text-muted shadow-neu-raised-sm"
                     }`}
                   >
                     <span className="truncate">{c.title || "Campaign"}</span>

@@ -101,21 +101,21 @@ export default function PostCard({
   return (
     <div className="card animate-fade-in-up mb-3">
       <div className="flex items-start gap-3">
-        <div className="w-10 h-10 bg-gradient-to-br from-eco-primary to-emerald-400 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-sm">
+        <div className="w-10 h-10 bg-neu-bg rounded-full flex items-center justify-center text-eco-primary text-sm font-bold flex-shrink-0 shadow-neu-raised-sm">
           {post.userId.name?.charAt(0)?.toUpperCase() || "U"}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold text-sm text-gray-900">{post.userId.name}</span>
-            <span className="text-xs text-gray-400">{timeAgo(post.createdAt)}</span>
+            <span className="font-semibold text-sm text-neu-text">{post.userId.name}</span>
+            <span className="text-xs text-neu-text-muted">{timeAgo(post.createdAt)}</span>
             {post.campaignStatus && (
               <span
                 className={`badge ${
                   post.campaignStatus === "started"
-                    ? "bg-blue-50 text-blue-700 border border-blue-200"
+                    ? "bg-neu-blue-light text-blue-700 shadow-neu-pressed-sm"
                     : post.campaignStatus === "completed"
-                    ? "bg-green-50 text-green-700 border border-green-200"
-                    : "bg-amber-50 text-amber-700 border border-amber-200"
+                    ? "bg-neu-accent/10 text-green-700 shadow-neu-pressed-sm"
+                    : "bg-neu-amber-light text-amber-700 shadow-neu-pressed-sm"
                 }`}
               >
                 {post.campaignStatus}
@@ -123,7 +123,7 @@ export default function PostCard({
             )}
           </div>
 
-          <p className="text-sm text-gray-700 whitespace-pre-wrap mb-3 leading-relaxed">
+          <p className="text-sm text-neu-text-secondary whitespace-pre-wrap mb-3 leading-relaxed">
             {post.content}
           </p>
 
@@ -138,7 +138,7 @@ export default function PostCard({
                   key={i}
                   src={img}
                   alt=""
-                  className="w-full h-48 object-cover rounded-xl border border-gray-100 transition-transform duration-300 hover:scale-[1.01]"
+                  className="w-full h-48 object-cover rounded-2xl shadow-neu-raised-sm transition-transform duration-300 hover:scale-[1.01]"
                 />
               ))}
             </div>
@@ -147,21 +147,21 @@ export default function PostCard({
           {post.hashtags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-3">
               {post.hashtags.map((tag) => (
-                <span key={tag} className="text-xs text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">
+                <span key={tag} className="text-xs text-eco-primary font-medium bg-neu-accent/10 px-2 py-0.5 rounded-xl shadow-neu-pressed-sm">
                   #{tag}
                 </span>
               ))}
             </div>
           )}
 
-          <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+          <div className="flex items-center gap-2 pt-2 border-t border-neu-shadow-dark/15">
             <button
               onClick={handleLike}
               disabled={liking}
-              className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all duration-200 active:scale-95 ${
+              className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl transition-all duration-200 active:scale-95 ${
                 isLiked
-                  ? "text-red-500 bg-red-50 hover:bg-red-100"
-                  : "text-gray-400 hover:text-red-500 hover:bg-red-50"
+                  ? "text-neu-red shadow-neu-pressed-sm"
+                  : "text-neu-text-muted hover:text-neu-red hover:shadow-neu-pressed-sm"
               }`}
             >
               <Heart className={`w-4 h-4 transition-transform duration-200 ${isLiked ? "fill-current scale-110" : ""}`} />
@@ -171,7 +171,7 @@ export default function PostCard({
             {isAuthor && (
               <button
                 onClick={handleDelete}
-                className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all duration-200 active:scale-95"
+                className="flex items-center gap-1.5 text-xs font-medium text-neu-text-muted hover:text-neu-red px-3 py-1.5 rounded-xl hover:shadow-neu-pressed-sm transition-all duration-200 active:scale-95"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -179,7 +179,7 @@ export default function PostCard({
 
             {post.campaignStatus && (
               <div className="flex items-center gap-2 ml-auto">
-                <span className="flex items-center gap-1 text-xs text-gray-500 font-medium">
+                <span className="flex items-center gap-1 text-xs text-neu-text-secondary font-medium">
                   <Users className="w-3.5 h-3.5" />
                   {volunteerNeeded > 0
                     ? `${volunteerCount}/${volunteerNeeded}`
@@ -188,20 +188,20 @@ export default function PostCard({
                 {post.campaignStatus === "proposed" && !isAuthor && !isFull && (
                   <button
                     onClick={handleJoin}
-                    className="text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-all duration-200 active:scale-95"
+                    className="text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-neu-accent/10 text-green-700 shadow-neu-raised-sm hover:shadow-neu-hover transition-all duration-200 active:scale-95"
                   >
                     Join
                   </button>
                 )}
                 {post.campaignStatus === "proposed" && !isAuthor && isFull && (
-                  <span className="badge bg-gray-100 text-gray-500 border border-gray-200">
+                  <span className="badge bg-neu-bg text-neu-text-muted shadow-neu-pressed-sm">
                     Full
                   </span>
                 )}
                 {post.campaignStatus === "proposed" && isAuthor && (
                   <button
                     onClick={handleStart}
-                    className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-all duration-200 active:scale-95"
+                    className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-neu-blue-light text-blue-700 shadow-neu-raised-sm hover:shadow-neu-hover transition-all duration-200 active:scale-95"
                   >
                     <Play className="w-3 h-3" />
                     Start
@@ -210,7 +210,7 @@ export default function PostCard({
                 {post.campaignStatus === "started" && isAuthor && (
                   <button
                     onClick={handleEnd}
-                    className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 transition-all duration-200 active:scale-95"
+                    className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-neu-red-light text-red-700 shadow-neu-raised-sm hover:shadow-neu-hover transition-all duration-200 active:scale-95"
                   >
                     <Square className="w-3 h-3" />
                     End
