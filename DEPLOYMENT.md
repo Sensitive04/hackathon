@@ -5,6 +5,18 @@ Deploy this project to production:
 - **Frontend** (React/Vite) -> **Vercel** (or deploy from `client/` on Railway)
 - **Database** -> MongoDB Atlas (`greentech` DB)
 
+## Current production state (Aug 2026)
+
+- **Backend (Railway):** https://hackathon-production-068d.up.railway.app
+  - `GET /api/health` -> `{"status":"ok"}` | MongoDB (Atlas) connected
+  - Dockerfile at repo root builds the backend; service runs `dist/index.js`
+  - Domain routed to the app's `PORT` (Railway injects e.g. `8080`); update the
+    Railway domain target port to match `$PORT` if it ever changes.
+  - `CORS_ORIGIN` currently = the Railway URL (plus `http://localhost:5173`);
+    add the Vercel origin once the frontend is live.
+- **Frontend (Vercel):** not yet deployed. Set `VITE_API_URL` =
+  `https://hackathon-production-068d.up.railway.app/api`.
+
 > The backend MUST be a persistent service, not a serverless function, because
 > it uses Socket.io (long-lived WebSockets + in-memory connection state).
 > Railway keeps the process running by default; disable scale-to-zero for
